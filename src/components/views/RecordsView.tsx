@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Search, Filter, Download, FileText, Eye, MoreVertical, CheckCircle2, History } from "lucide-react";
 import { cn } from "../../lib/utils";
 
@@ -10,6 +11,8 @@ const RECORDS = [
 ];
 
 export function RecordsView() {
+  const navigate = useNavigate();
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -58,7 +61,11 @@ export function RecordsView() {
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
             {RECORDS.map((record, i) => (
-              <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors group">
+              <tr 
+                key={i} 
+                onClick={() => navigate(`/records/${record.id}`)}
+                className="hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors group cursor-pointer"
+              >
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
@@ -89,10 +96,16 @@ export function RecordsView() {
                 </td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <button className="p-2 hover:bg-emerald-50 dark:hover:bg-emerald-950 rounded-lg text-emerald-600 transition-colors" title="Visualizar">
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); navigate(`/records/${record.id}`); }}
+                      className="p-2 hover:bg-emerald-50 dark:hover:bg-emerald-950 rounded-lg text-emerald-600 transition-colors" title="Visualizar"
+                    >
                       <Eye className="w-5 h-5" />
                     </button>
-                    <button className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 transition-colors">
+                    <button 
+                      onClick={(e) => e.stopPropagation()}
+                      className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 transition-colors"
+                    >
                       <MoreVertical className="w-5 h-5" />
                     </button>
                   </div>

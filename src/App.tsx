@@ -11,10 +11,14 @@ import { DashboardView } from './components/views/DashboardView';
 import { ProcessesView } from './components/views/ProcessesView';
 import { DelimitationView } from './components/views/DelimitationView';
 import { RecordsView } from './components/views/RecordsView';
+import { RecordDetailsView } from './components/views/RecordDetailsView';
+import { OwnersView } from './components/views/OwnersView';
+import { OwnerDetailsView } from './components/views/OwnerDetailsView';
 import { HomeView } from './components/views/HomeView';
 import { LandingView } from './components/views/LandingView';
 import { ServicesView } from './components/views/ServicesView';
 import { TitlesView } from './components/views/TitlesView';
+import { TitleDetailsView } from './components/views/TitleDetailsView';
 import { StaffView } from './components/views/StaffView';
 import { ReportsView } from './components/views/SimpleViews';
 import { AdminSection } from './types';
@@ -91,7 +95,11 @@ function AppContent() {
         <Route path="/processes" element={<ProcessesView />} />
         <Route path="/delimitation" element={<DelimitationView />} />
         <Route path="/titles" element={<TitlesView />} />
+        <Route path="/titles/:id" element={<TitleDetailsView />} />
         <Route path="/records" element={<RecordsView />} />
+        <Route path="/records/:id" element={<RecordDetailsView />} />
+        <Route path="/owners" element={<OwnersView />} />
+        <Route path="/owners/:id" element={<OwnerDetailsView />} />
         <Route path="/staff" element={<StaffView />} />
         <Route path="/reports" element={<ReportsView />} />
         <Route path="*" element={<Navigate to="/" replace />} />
