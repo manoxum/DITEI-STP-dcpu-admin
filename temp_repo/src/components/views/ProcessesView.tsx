@@ -35,7 +35,7 @@ const INITIAL_PROCESSES = [
   { 
     id: 'STP-001', 
     applicant: 'João Manuel', 
-    type: 'Concessão de Terreno', 
+    type: 'Concessão', 
     status: 'pending', 
     step: 1, // 1. Triagem & Admissibilidade
     date: '2026-06-15', 
@@ -50,7 +50,7 @@ const INITIAL_PROCESSES = [
   { 
     id: 'STP-002', 
     applicant: 'Maria das Dores', 
-    type: 'Legalização de Posse', 
+    type: 'Legalização', 
     status: 'in_review', 
     step: 3, // 3. Vistoria SIG & Delimitação
     date: '2026-06-14', 
@@ -65,7 +65,7 @@ const INITIAL_PROCESSES = [
   { 
     id: 'STP-003', 
     applicant: 'António Silva', 
-    type: 'Transpasse / Averbamento', 
+    type: 'Transpasse', 
     status: 'approved', 
     step: 6, // 6. Emissão de Título Digital
     date: '2026-06-12', 
@@ -80,7 +80,7 @@ const INITIAL_PROCESSES = [
   { 
     id: 'STP-004', 
     applicant: 'Construções STP Lda', 
-    type: 'Representação Gráfica (RGG)', 
+    type: 'Delimitação', 
     status: 'pending', 
     step: 2, // 2. Auditoria Legal & Registo
     date: '2026-06-11', 
@@ -89,13 +89,13 @@ const INITIAL_PROCESSES = [
     phone: '+239 992 5566', 
     email: 'contacto@construcoesstp.st', 
     nif: '500122345', 
-    desc: 'Identificação georreferenciada via SIG de lote com área aproximada de 1.245m² do domínio privado do estado.',
+    desc: 'Delimitação poligonal cadastral para averbação SIG de lote com área aproximada de 1.245m².',
     checklist: { bi: true, fees: true, title_chain: false, non_overlap: false, neighbors: false, director_sign: false, cert_seal: false }
   },
   { 
     id: 'STP-005', 
     applicant: 'Isabel Rocha', 
-    type: 'Resolução de Conflitos', 
+    type: 'Reclamação', 
     status: 'in_review', 
     step: 4, // 4. Consulta Pública & Confrontantes
     date: '2026-06-10', 
@@ -110,7 +110,7 @@ const INITIAL_PROCESSES = [
   { 
     id: 'STP-006', 
     applicant: 'Pedro Afonso', 
-    type: 'Certidão Cadastral', 
+    type: 'Concessão', 
     status: 'rejected', 
     step: 5, // 5. Homologação & Despacho
     date: '2026-06-08', 
@@ -119,7 +119,7 @@ const INITIAL_PROCESSES = [
     phone: '+239 999 8877', 
     email: 'pedro.afonso@email.st', 
     nif: '100223344', 
-    desc: 'Pedido de emissão de certidão de limites cadastrais. Rejeitado por dados em falta e ausência de vistoria prévia.',
+    desc: 'Pedido de concessão florestal rústica em área que colide com os limites protegidos do Parque Natural Obô.',
     checklist: { bi: true, fees: true, title_chain: true, non_overlap: false, neighbors: false, director_sign: false, cert_seal: false }
   },
 ];

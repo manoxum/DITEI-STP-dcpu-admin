@@ -1,0 +1,71 @@
+@import "@fontsource/outfit/300.css";
+@import "@fontsource/outfit/400.css";
+@import "@fontsource/outfit/500.css";
+@import "@fontsource/outfit/600.css";
+@import "@fontsource/outfit/700.css";
+@import "@fontsource/plus-jakarta-sans/400.css";
+@import "@fontsource/plus-jakarta-sans/500.css";
+@import "@fontsource/plus-jakarta-sans/600.css";
+@import "@fontsource/plus-jakarta-sans/700.css";
+@import "tailwindcss";
+
+/* Use class-based dark mode (.dark on <html>) instead of prefers-color-scheme */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", sans-serif;
+
+  --color-brand-primary: #059669; /* Emerald 600 - More professional */
+  --color-brand-primary-light: #34d399;
+  --color-brand-primary-dark: #065f46;
+  
+  --color-slate-925: #0f172a; /* Custom deeper slate */
+  
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-200 text-slate-800 transition-colors duration-500 antialiased;
+  }
+
+  .dark body {
+    @apply bg-slate-950 text-slate-100;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-slate-50 border border-slate-300/60 shadow-[0_4px_20px_rgb(0,0,0,0.07)] transition-all duration-300;
+  }
+
+  .dark .glass-card {
+    @apply bg-slate-900/40 backdrop-blur-xl border-slate-800/50 shadow-none;
+  }
+
+  .premium-gradient {
+    @apply bg-gradient-to-br from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600;
+  }
+  
+  .sidebar-link-active {
+    @apply bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-200/50 dark:border-transparent;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 rounded-full cursor-pointer;
+}
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-slate-800;
+}
+

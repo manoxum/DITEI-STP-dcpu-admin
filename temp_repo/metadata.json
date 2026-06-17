@@ -1,0 +1,6 @@
+{
+  "name": "DSGC Admin Portal",
+  "description": "Sistema de gestao administrativa para a Direcao de Servicos Geograficos e Cadastrais de Sao Tome e Principe.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
