@@ -15,7 +15,8 @@ import { HomeView } from './components/views/HomeView';
 import { LandingView } from './components/views/LandingView';
 import { ServicesView } from './components/views/ServicesView';
 import { TitlesView } from './components/views/TitlesView';
-import { StaffView, ReportsView } from './components/views/SimpleViews';
+import { StaffView } from './components/views/StaffView';
+import { ReportsView } from './components/views/SimpleViews';
 import { AdminSection } from './types';
 
 export default function App() {

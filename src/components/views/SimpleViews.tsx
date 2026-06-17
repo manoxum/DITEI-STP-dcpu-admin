@@ -1,50 +1,6 @@
 import { Users, UserPlus, Briefcase, PieChart, Download, FileText, TrendingUp, AlertCircle } from "lucide-react";
 import { motion } from "motion/react";
 
-export function StaffView() {
-  const staff = [
-    { name: 'Ana Silva', role: 'Técnico Superior', type: 'Interno', status: 'Online' },
-    { name: 'Bernardo Cruz', role: 'Topógrafo', type: 'Interno', status: 'No Terreno' },
-    { name: 'Carla Dias', role: 'Consultor Externo', type: 'Externo', status: 'Offline' },
-    { name: 'Dário Évora', role: 'Jurista', type: 'Interno', status: 'Online' },
-  ];
-
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-display font-bold tracking-tight">Staff e Colaboradores</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Gestão de técnicos internos e utilizadores externos.</p>
-        </div>
-        <button className="premium-gradient text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-emerald-500/20">
-          <UserPlus className="w-5 h-5" />
-          Adicionar Técnico
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {staff.map((member, i) => (
-          <div key={i} className="glass-card p-6 rounded-2xl text-center space-y-4">
-            <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 mx-auto flex items-center justify-center border-2 border-emerald-500/20">
-              <Users className="w-10 h-10 text-slate-400" />
-            </div>
-            <div>
-              <h3 className="font-bold text-lg">{member.name}</h3>
-              <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">{member.role}</p>
-            </div>
-            <div className="flex justify-center gap-2">
-               <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] font-bold uppercase">{member.type}</span>
-               <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${member.status === 'Online' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                 {member.status}
-               </span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export function ReportsView() {
   return (
     <div className="space-y-6">
