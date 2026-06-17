@@ -20,9 +20,11 @@ import { TitlesView } from './components/views/TitlesView';
 import { TitleDetailsView } from './components/views/TitleDetailsView';
 import { StaffView } from './components/views/StaffView';
 import { ReportsView } from './components/views/SimpleViews';
+import { LandPlanningView } from './components/views/LandPlanningView';
 import { AdminSection } from './types';
 
 import { ValidateTitleView } from './components/views/ValidateTitleView';
+import { FieldTechMobileView } from './components/views/FieldTechMobileView';
 
 export default function App() {
   return (
@@ -67,6 +69,15 @@ function AppContent() {
     );
   }
 
+  // Mobile App route (standalone without AdminLayout)
+  if (location.pathname === '/app' || location.pathname.startsWith('/app/')) {
+    return (
+      <Routes>
+        <Route path="/app" element={<FieldTechMobileView />} />
+      </Routes>
+    );
+  }
+
   if (location.pathname === '/login') {
     if (isLoggedIn) return <Navigate to="/dashboard" replace />;
     return <LoginView onLogin={handleLogin} />;
@@ -84,6 +95,7 @@ function AppContent() {
         <Route path="/services" element={<ServicesView />} />
         <Route path="/processes" element={<ProcessesView />} />
         <Route path="/delimitation" element={<DelimitationView />} />
+        <Route path="/planning" element={<LandPlanningView />} />
         <Route path="/titles" element={<TitlesView />} />
         <Route path="/titles/:id" element={<TitleDetailsView />} />
         <Route path="/owners" element={<OwnersView />} />

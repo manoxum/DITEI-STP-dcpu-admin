@@ -197,6 +197,17 @@ export function TitleDetailsView() {
   const [pinValue, setPinValue] = useState('');
   const [pinError, setPinError] = useState(false);
   const [isSigning, setIsSigning] = useState(false);
+  const [previewDoc, setPreviewDoc] = useState<any>(null);
+
+  const handleDownloadDoc = (doc: any) => {
+    // Simulated download behavior
+    const link = document.createElement('a');
+    link.href = '#';
+    link.download = `${doc.name}.${doc.type || 'pdf'}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   // Load unified database from localStorage or fallback
   const [db, setDb] = useState<Record<string, any>>(() => {
@@ -528,23 +539,47 @@ export function TitleDetailsView() {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {data.documents.map((doc: any) => (
-                <div key={doc.id} className="group p-6 rounded-[2rem] bg-slate-50/50 dark:bg-slate-950/30 border border-slate-100 dark:border-slate-800/50 hover:border-emerald-500/20 hover:bg-white dark:hover:bg-slate-900 transition-all flex items-center justify-between">
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+              {[
+                // Add the main title document if it is issued
+                ...(data.status === 'issued' ? [{
+                  id: 'doc-titulo-principal',
+                  name: `Título de Propriedade - ${data.id}`,
+                  category: 'Título Definitivo',
+                  date: data.history.find((h: any) => h.event === 'Assinatura Eletrónica Concedida')?.date?.split(' ')[0] || '2026-06-17',
+                  size: '2.4 MB',
+                  type: 'pdf',
+                  importance: 100 // Highest importance
+                }] : []),
+                // Map existing documents with varying importance
+                ...data.documents.map((doc: any, index: number) => ({
+                  ...doc,
+                  importance: doc.category.includes('Planta') ? 80 : doc.category.includes('Certidão') ? 70 : 50 - index,
+                  type: doc.name.toLowerCase().endsWith('pdf') ? 'pdf' : doc.name.toLowerCase().endsWith('jpg') || doc.name.toLowerCase().endsWith('png') ? 'image' : 'document'
+                }))
+              ].sort((a, b) => b.importance - a.importance).map((doc: any) => (
+                <div key={doc.id} className="group p-5 rounded-[2rem] bg-slate-50/50 dark:bg-slate-950/30 border border-slate-100 dark:border-slate-800/50 hover:border-emerald-500/20 hover:bg-white dark:hover:bg-slate-900 transition-all flex items-center justify-between cursor-pointer" onClick={() => setPreviewDoc(doc)}>
                   <div className="flex items-center gap-5">
                     <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm text-slate-400 group-hover:text-emerald-500 transition-colors">
                       <FileText className="w-6 h-6" />
                     </div>
                     <div>
-                      <p className="font-bold text-slate-900 dark:text-white leading-tight mb-1">{doc.name}</p>
+                      <p className="font-bold text-slate-900 dark:text-white leading-tight mb-1 group-hover:text-emerald-600 transition-colors">{doc.name}</p>
                       <div className="flex items-center gap-3">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500/60 bg-emerald-500/5 px-2 py-0.5 rounded-full">{doc.category}</span>
+                        <span className={cn(
+                          "text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full",
+                          doc.importance === 100 ? "text-amber-600 bg-amber-500/10" : "text-emerald-500/60 bg-emerald-500/5"
+                        )}>{doc.category}</span>
                         <span className="text-[10px] font-medium text-slate-400">{doc.date} • {doc.size}</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button className="p-3 hover:bg-emerald-500/10 rounded-xl text-slate-400 hover:text-emerald-500 transition-all group/btn">
+                  <div className="flex gap-2 relative z-10" onClick={(e) => e.stopPropagation()}>
+                    <button 
+                      onClick={() => handleDownloadDoc(doc)}
+                      className="p-3 hover:bg-emerald-500/10 rounded-xl text-slate-400 hover:text-emerald-500 transition-all group/btn" 
+                      title="Baixar Documento"
+                    >
                       <FileDown className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
                     </button>
                     <button className="p-3 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
@@ -573,23 +608,29 @@ export function TitleDetailsView() {
                    Este documento possui assinatura eletrónica criptográfica qualificada e está homologado na rede oficial do Estado Santomense.
                  </p>
                  
-                 <div className="bg-white p-4 rounded-3xl shadow-xl shadow-emerald-500/10 border border-slate-100 dark:border-slate-800 mb-8 w-48 h-48 flex items-center justify-center relative group overflow-hidden">
+                 <div className="bg-white p-4 rounded-3xl shadow-xl shadow-emerald-500/10 border border-slate-100 dark:border-slate-800 mb-6 w-48 h-48 flex items-center justify-center relative group overflow-hidden">
                     <QRCode
                       value={validateUrl}
                       size={160}
                       className="opacity-90 transition-opacity group-hover:opacity-100"
                       viewBox={`0 0 256 256`}
                     />
-                    <div className="absolute inset-0 bg-emerald-900/0 group-hover:bg-emerald-900/5 transition-colors pointer-events-none rounded-3xl"></div>
+                    <a href={validateUrl} target="_blank" rel="noopener noreferrer" className="absolute inset-0 bg-emerald-900/0 group-hover:bg-emerald-900/5 transition-colors flex items-center justify-center rounded-3xl cursor-pointer">
+                      <ExternalLink className="w-8 h-8 text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" />
+                    </a>
                  </div>
 
-                 <div className="w-full flex items-center justify-center gap-4 p-4 rounded-2xl bg-emerald-50 dark:bg-white/5 border border-emerald-100 dark:border-white/10">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center shrink-0">
-                      <Check className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                 <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-8 cursor-pointer hover:text-emerald-600 transition-colors" onClick={() => window.open(validateUrl, '_blank')}>
+                   Validar Documento <ExternalLink className="w-3 h-3 inline pb-0.5" />
+                 </p>
+
+                 <div className="w-full flex items-center justify-center gap-4 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center shrink-0">
+                      <FileSignature className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <div className="text-left">
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Documento Válido</p>
-                      <p className="text-xs font-bold text-slate-900 dark:text-white">QR Code Autenticado</p>
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Documento Válido & Autêntico</p>
+                      <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400">Documento Assinado Digitalmente</p>
                     </div>
                  </div>
                </div>
@@ -836,6 +877,111 @@ export function TitleDetailsView() {
           </motion.div>
         </div>
       )}
+      {/* Document Preview Modal */}
+      {previewDoc && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
+            onClick={() => setPreviewDoc(null)}
+          />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="relative w-full max-w-4xl h-[85vh] bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50">
+              <div className="flex items-center gap-4">
+                <div className={cn(
+                  "w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm",
+                  previewDoc.importance === 100 
+                    ? "bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400" 
+                    : "bg-white dark:bg-slate-800 text-emerald-500"
+                )}>
+                  {previewDoc.importance === 100 ? <Award className="w-6 h-6" /> : <FileText className="w-6 h-6" />}
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-slate-800 dark:text-white leading-tight">{previewDoc.name}</h3>
+                  <div className="flex items-center gap-3 mt-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{previewDoc.category}</span>
+                    <span className="text-[10px] font-medium text-slate-400">{previewDoc.date} • {previewDoc.size}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => handleDownloadDoc(previewDoc)}
+                  className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 rounded-xl font-bold text-xs uppercase tracking-widest transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  Baixar Documento
+                </button>
+                <button 
+                  onClick={() => setPreviewDoc(null)}
+                  className="p-3 text-slate-400 hover:text-slate-600 dark:hover:text-white bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors"
+                >
+                  <XCircle className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+            
+            {/* Content Body */}
+            <div className="flex-1 bg-slate-100 dark:bg-slate-950 p-8 flex items-center justify-center overflow-auto relative">
+              {previewDoc.importance === 100 ? (
+                // Simulacro de Titulo de Propriedade
+                <div className="w-full max-w-2xl bg-white shadow-2xl p-12 border-2 border-slate-200 relative">
+                   <div className="absolute top-0 inset-x-0 h-4 bg-emerald-600"></div>
+                   <div className="text-center mb-10">
+                     <div className="w-16 h-16 mx-auto bg-slate-100 rounded-full mb-4"></div>
+                     <h2 className="text-2xl font-serif font-bold text-slate-900 border-b border-slate-300 pb-4">TÍTULO DE PROPRIEDADE CADASTRAL</h2>
+                     <p className="text-sm font-medium text-slate-500 mt-4 uppercase tracking-widest">N.º {data.id}</p>
+                   </div>
+                   
+                   <div className="space-y-6 text-slate-800 text-sm leading-relaxed mb-16">
+                     <p>
+                       A Direção dos Serviços Geográficos e Cadastrais, ao abrigo da legislação em vigor, certifica que <strong>{data.utente.name}</strong>, titular do NIF {data.utente.nif}, é detentor legítimo dos direitos fundiários sobre o prédio rústico/urbano situado em <strong>{data.parcel.location}</strong>.
+                     </p>
+                     <p>
+                       A propriedade encontra-se demarcada fisicamente e georreferenciada no Sistema Nacional de Informação Cadastral sob a referência de parcela <strong>{data.parcel.id}</strong>, compreendendo uma área total de <strong>{data.parcel.area}</strong> e perímetro de {data.parcel.perimeter}.
+                     </p>
+                     <p>Despacho de aprovação {data.issueDate}. O presente título confere valor probatório pleno conforme as leis do Estado.</p>
+                   </div>
+                   
+                   <div className="flex justify-between items-end border-t border-slate-200 pt-8 mt-12 w-full">
+                     <div className="text-center flex-1">
+                       <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-8">Validado Por</p>
+                       <div className="w-48 border-b border-slate-400 mx-auto mb-2 signature-line relative">
+                          <span className="absolute -top-6 left-1/2 -translate-x-1/2 font-signature text-2xl text-emerald-800 opacity-60 font-medium">Manuel Cardoso</span>
+                       </div>
+                       <p className="text-xs text-slate-600 font-bold">Diretor-Geral do DSGC</p>
+                     </div>
+                     <div className="flex-1 flex justify-end">
+                       <QRCode
+                          value={validateUrl}
+                          size={100}
+                          className="opacity-90"
+                          viewBox={`0 0 256 256`}
+                        />
+                     </div>
+                   </div>
+                </div>
+              ) : (
+                // PDF/Img generico Placeholder
+                <div className="w-full max-w-2xl aspect-[1/1.414] bg-white shadow-xl flex items-center justify-center relative shadow-black/5">
+                   <div className="text-center space-y-4 text-slate-400">
+                     <FileText className="w-20 h-20 mx-auto opacity-20" />
+                     <p className="font-medium text-lg text-slate-500">Pré-visualização do Documento</p>
+                     <p className="text-sm">O conteúdo deste documento está cifrado no SGED.</p>
+                   </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
+
     </div>
   );
 }

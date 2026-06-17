@@ -44,8 +44,8 @@ export function ValidateTitleView() {
               <div className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-emerald-500/30">
                 <CheckCircle2 className="w-10 h-10 text-white" />
               </div>
-              <h3 className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mb-2">Título Autêntico e Válido</h3>
-              <p className="text-emerald-700/80 dark:text-emerald-500/80 font-medium">Este documento emitido pelo DSGC foi verificado criptograficamente e encontra-se ativo.</p>
+              <h3 className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mb-2">Documento Assinado Digitalmente</h3>
+              <p className="text-emerald-700/80 dark:text-emerald-500/80 font-medium max-w-sm mx-auto">Este título foi autenticado criptograficamente pelo DSGC e encontra-se ativo no sistema cadastral.</p>
             </div>
 
             <div className="p-8 space-y-6">

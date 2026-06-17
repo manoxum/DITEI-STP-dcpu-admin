@@ -23,6 +23,7 @@ export type AdminSection =
   | 'services' 
   | 'processes' 
   | 'delimitation' 
+  | 'planning'
   | 'titles' 
   | 'owners'
   | 'staff' 
@@ -39,6 +40,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, description: 'Visão geral do estado do DSGC' },
   { id: 'services', label: 'Serviços', icon: Briefcase, description: 'Gestão de entrada de pedidos' },
   { id: 'processes', label: 'Processos', icon: ClipboardList, description: 'Fluxo de trabalho administrativo' },
+  { id: 'planning', label: 'Planeamento de Loteamento', icon: PieChart, description: 'Divisão e organização de terrenos' },
   { id: 'delimitation', label: 'Revisão e Delimitação', icon: MapIcon, description: 'Aprovação de terrenos e levantamentos' },
   { id: 'titles', label: 'Títulos', icon: FileCheck, description: 'Análise e emissão de propriedade' },
   { id: 'owners', label: 'Titulares', icon: UserCircle, description: 'Gestão de proprietários e requerentes' },
