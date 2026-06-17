@@ -1,0 +1,6 @@
+{
+  "name": "DSGC Admin Portal",
+  "description": "Sistema de gestão administrativa para a Direção dos Serviços Geográficos e Cadastrais de São Tomé e Príncipe.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
