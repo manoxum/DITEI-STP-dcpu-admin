@@ -24,7 +24,6 @@ export type AdminSection =
   | 'processes' 
   | 'delimitation' 
   | 'titles' 
-  | 'records' 
   | 'owners'
   | 'staff' 
   | 'reports';
@@ -42,7 +41,6 @@ export const NAV_ITEMS: NavItem[] = [
   { id: 'processes', label: 'Processos', icon: ClipboardList, description: 'Fluxo de trabalho administrativo' },
   { id: 'delimitation', label: 'Revisão e Delimitação', icon: MapIcon, description: 'Aprovação de terrenos e levantamentos' },
   { id: 'titles', label: 'Títulos', icon: FileCheck, description: 'Análise e emissão de propriedade' },
-  { id: 'records', label: 'Registos', icon: Database, description: 'Consulta de títulos emitidos' },
   { id: 'owners', label: 'Titulares', icon: UserCircle, description: 'Gestão de proprietários e requerentes' },
   { id: 'staff', label: 'Staff', icon: UserCog, description: 'Gestão de técnicos internos e externos' },
   { id: 'reports', label: 'Relatórios', icon: PieChart, description: 'Auditorias e métricas de desempenho' },

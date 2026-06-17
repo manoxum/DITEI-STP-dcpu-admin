@@ -10,8 +10,6 @@ import { LoginView } from './components/LoginView';
 import { DashboardView } from './components/views/DashboardView';
 import { ProcessesView } from './components/views/ProcessesView';
 import { DelimitationView } from './components/views/DelimitationView';
-import { RecordsView } from './components/views/RecordsView';
-import { RecordDetailsView } from './components/views/RecordDetailsView';
 import { OwnersView } from './components/views/OwnersView';
 import { OwnerDetailsView } from './components/views/OwnerDetailsView';
 import { HomeView } from './components/views/HomeView';
@@ -96,8 +94,6 @@ function AppContent() {
         <Route path="/delimitation" element={<DelimitationView />} />
         <Route path="/titles" element={<TitlesView />} />
         <Route path="/titles/:id" element={<TitleDetailsView />} />
-        <Route path="/records" element={<RecordsView />} />
-        <Route path="/records/:id" element={<RecordDetailsView />} />
         <Route path="/owners" element={<OwnersView />} />
         <Route path="/owners/:id" element={<OwnerDetailsView />} />
         <Route path="/staff" element={<StaffView />} />

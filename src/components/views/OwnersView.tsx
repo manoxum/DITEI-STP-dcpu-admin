@@ -17,13 +17,20 @@ import { cn } from '../../lib/utils';
 
 const OWNERS_DATA = [
   { id: 'OWN-101', name: 'António dos Santos', nif: '100234567', type: 'Física', assets: 2, status: 'Verificado', email: 'antonio.santo@email.st' },
-  { id: 'OWN-102', name: 'Maria da Graça', nif: '100554321', type: 'Física', assets: 1, status: 'Pendente', email: 'maria.graca@email.st' },
-  { id: 'OWN-103', name: 'Sociedade Agrícola STP Lda', nif: '500887766', type: 'Jurídica', assets: 5, status: 'Verificado', email: 'contato@agricola.st' },
+  { id: 'OWN-102', name: 'Maria da Silva', nif: '100554321', type: 'Física', assets: 1, status: 'Pendente', email: 'maria.silva@email.st' },
+  { id: 'OWN-103', name: 'Companhia de Investimento Lda', nif: '500887766', type: 'Jurídica', assets: 1, status: 'Verificado', email: 'contato@investimento.st' },
+  { id: 'OWN-104', name: 'João Batista', nif: '100345678', type: 'Física', assets: 1, status: 'Suspenso', email: 'joao.batista@email.st' },
 ];
 
 export function OwnersView() {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
+
+  const filteredOwners = OWNERS_DATA.filter(owner => 
+    owner.name.toLowerCase().includes(search.toLowerCase()) ||
+    owner.id.toLowerCase().includes(search.toLowerCase()) ||
+    owner.nif.includes(search)
+  );
 
   return (
     <div className="space-y-6">
@@ -72,7 +79,7 @@ export function OwnersView() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {OWNERS_DATA.map((owner) => (
+              {filteredOwners.map((owner) => (
                 <tr 
                   key={owner.id} 
                   onClick={() => navigate(`/owners/${owner.id}`)}
@@ -104,9 +111,14 @@ export function OwnersView() {
                   <td className="px-6 py-4">
                     <div className={cn(
                       "inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest",
-                      owner.status === 'Verificado' ? "text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10" : "text-amber-600 bg-amber-50 dark:bg-amber-500/10"
+                      owner.status === 'Verificado' ? "text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10" : 
+                      owner.status === 'Pendente' ? "text-amber-600 bg-amber-50 dark:bg-amber-500/10" : "text-rose-600 bg-rose-50 dark:bg-rose-500/10"
                     )}>
-                      <div className={cn("w-1.5 h-1.5 rounded-full", owner.status === 'Verificado' ? "bg-emerald-500" : "bg-amber-500")} />
+                      <div className={cn(
+                        "w-1.5 h-1.5 rounded-full", 
+                        owner.status === 'Verificado' ? "bg-emerald-500" : 
+                        owner.status === 'Pendente' ? "bg-amber-500" : "bg-rose-500"
+                      )} />
                       {owner.status}
                     </div>
                   </td>
