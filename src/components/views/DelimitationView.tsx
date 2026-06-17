@@ -159,10 +159,11 @@ export function DelimitationView() {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3 space-y-6">
           {/* Map Interface */}
-          <div className="glass-card rounded-[2.5rem] h-[600px] overflow-hidden relative border-none shadow-xl bg-slate-950">
+          <div className="glass-card rounded-[2.5rem] h-[600px] overflow-hidden relative border-none shadow-xl bg-slate-100 dark:bg-slate-950">
             {/* Mock Map Background (Satellite View) */}
             <div className="absolute inset-0 overflow-hidden">
-               <div className="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1541462608141-ad6b3eb16995?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center"></div>
+               <div className="absolute inset-0 opacity-40 dark:opacity-40 bg-[url('https://images.unsplash.com/photo-1541462608141-ad6b3eb16995?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center"></div>
+               <div className="absolute inset-0 bg-white/20 dark:bg-transparent"></div>
                <svg className="absolute inset-0 w-full h-full p-20" viewBox="0 0 1000 600">
                   <path 
                     d="M 200 100 L 400 50 L 600 150 L 550 350 L 250 400 Z" 
@@ -186,21 +187,21 @@ export function DelimitationView() {
 
             {/* Map Controls */}
             <div className="absolute top-8 left-8 space-y-2">
-              <div className="bg-slate-900/80 backdrop-blur-md flex flex-col p-2 space-y-1 rounded-2xl shadow-2xl border border-white/10">
-                <button className="p-3 hover:bg-white/10 rounded-xl text-white transition-colors"><ZoomIn className="w-5 h-5" /></button>
-                <button className="p-3 hover:bg-white/10 rounded-xl text-white transition-colors"><ZoomOut className="w-5 h-5" /></button>
-                <div className="h-[1px] bg-white/10 mx-1"></div>
-                <button className="p-3 hover:bg-white/10 rounded-xl text-white transition-colors"><Navigation className="w-5 h-5" /></button>
+              <div className="bg-white/90 dark:bg-slate-900/80 backdrop-blur-md flex flex-col p-2 space-y-1 rounded-2xl shadow-2xl border border-slate-200 dark:border-white/10">
+                <button className="p-3 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl text-slate-600 dark:text-white transition-colors"><ZoomIn className="w-5 h-5" /></button>
+                <button className="p-3 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl text-slate-600 dark:text-white transition-colors"><ZoomOut className="w-5 h-5" /></button>
+                <div className="h-[1px] bg-slate-200 dark:bg-white/10 mx-1"></div>
+                <button className="p-3 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl text-slate-600 dark:text-white transition-colors"><Navigation className="w-5 h-5" /></button>
               </div>
             </div>
 
             <div className="absolute top-8 right-8">
-              <div className="bg-slate-900/80 backdrop-blur-md flex items-center p-2 rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
+              <div className="bg-white/90 dark:bg-slate-900/80 backdrop-blur-md flex items-center p-2 rounded-2xl shadow-2xl border border-slate-200 dark:border-white/10 overflow-hidden">
                 <button className="px-4 py-2 flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white bg-emerald-500 rounded-xl">
                   <ImageIcon className="w-4 h-4" />
                   Satélite
                 </button>
-                <button className="px-4 py-2 flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-white transition-colors">
+                <button className="px-4 py-2 flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
                   <MapIcon className="w-4 h-4" />
                   Híbrido
                 </button>
@@ -208,23 +209,23 @@ export function DelimitationView() {
             </div>
 
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
-               <div className="bg-slate-900/80 backdrop-blur-md flex items-center p-2 rounded-[2rem] shadow-2xl border border-white/10 gap-1">
+               <div className="bg-white/90 dark:bg-slate-900/80 backdrop-blur-md flex items-center p-2 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-white/10 gap-1">
                   <button className="p-4 text-emerald-400 bg-emerald-500/10 rounded-2xl transition-all shadow-inner"><MousePointer2 className="w-6 h-6" /></button>
-                  <button className="p-4 text-slate-400 hover:text-white transition-all"><Ruler className="w-6 h-6" /></button>
-                  <button className="p-4 text-slate-400 hover:text-white transition-all"><Layers className="w-6 h-6" /></button>
-                  <div className="w-[1px] h-10 bg-white/10 mx-3"></div>
-                   <button className="p-4 text-slate-400 hover:text-white transition-all hover:scale-110"><PlusIcon className="w-6 h-6" /></button>
+                  <button className="p-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"><Ruler className="w-6 h-6" /></button>
+                  <button className="p-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"><Layers className="w-6 h-6" /></button>
+                  <div className="w-[1px] h-10 bg-slate-200 dark:bg-white/10 mx-3"></div>
+                   <button className="p-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all hover:scale-110"><PlusIcon className="w-6 h-6" /></button>
                </div>
             </div>
 
             <div className="absolute bottom-8 right-8 flex items-center gap-4">
-               <div className="bg-slate-900/80 backdrop-blur-md px-6 py-3 rounded-2xl shadow-2xl border border-white/10">
+               <div className="bg-white/90 dark:bg-slate-900/80 backdrop-blur-md px-6 py-3 rounded-2xl shadow-2xl border border-slate-200 dark:border-white/10">
                   <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Escala</p>
-                  <p className="text-sm font-display font-black text-white">1 : 2,500</p>
+                  <p className="text-sm font-display font-black text-slate-900 dark:text-white">1 : 2,500</p>
                </div>
-               <div className="bg-slate-900/80 backdrop-blur-md px-6 py-3 rounded-2xl shadow-2xl border border-white/10">
+               <div className="bg-white/90 dark:bg-slate-900/80 backdrop-blur-md px-6 py-3 rounded-2xl shadow-2xl border border-slate-200 dark:border-white/10">
                   <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Coordenadas</p>
-                  <p className="text-sm font-mono font-bold text-white animate-pulse">0° 20' 11" N | 6° 44' 02" E</p>
+                  <p className="text-sm font-mono font-bold text-slate-900 dark:text-white animate-pulse">0° 20' 11" N | 6° 44' 02" E</p>
                </div>
             </div>
           </div>

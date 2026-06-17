@@ -255,7 +255,7 @@ export function ServicesView() {
 
         {/* Info Sidebar */}
         <div className="space-y-8">
-          <div className="bg-slate-900 text-white p-10 rounded-[2.5rem] relative overflow-hidden shadow-2xl shadow-slate-900/20">
+          <div className="bg-slate-900 dark:bg-slate-800 text-white p-10 rounded-[2.5rem] relative overflow-hidden shadow-2xl shadow-slate-900/20">
              <div className="relative z-10">
                <h3 className="font-display font-black text-2xl tracking-tight mb-6">Resumo em Tempo Real</h3>
                <div className="space-y-6">
@@ -265,7 +265,7 @@ export function ServicesView() {
                    </div>
                    <div>
                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Média de Espera</p>
-                     <p className="text-lg font-bold">14 Minutos</p>
+                     <p className="text-lg font-bold text-white">14 Minutos</p>
                    </div>
                  </div>
                  <div className="flex gap-4">
@@ -274,7 +274,7 @@ export function ServicesView() {
                    </div>
                    <div>
                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Utentes em Fila</p>
-                     <p className="text-lg font-bold">4 Pessoas</p>
+                     <p className="text-lg font-bold text-white">4 Pessoas</p>
                    </div>
                  </div>
                </div>

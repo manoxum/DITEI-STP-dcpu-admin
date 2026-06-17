@@ -36,8 +36,8 @@ export function AdminLayout({
   const currentPath = location.pathname.substring(1) || 'home';
 
   return (
-    <div className={cn("min-h-screen font-sans transition-colors duration-300", theme)}>
-      <div className="flex bg-slate-50/50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen">
+    <div className={cn("min-h-screen font-sans transition-colors duration-300")}>
+      <div className="flex bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen">
         
         {/* Sidebar */}
         <motion.aside 

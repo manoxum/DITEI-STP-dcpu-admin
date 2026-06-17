@@ -129,7 +129,8 @@ export function DashboardView() {
                 />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: '#0f172a', 
+                    backgroundColor: 'var(--tw-backgroundColor-slate-900)',
+                    color: 'white',
                     borderRadius: '16px', 
                     border: 'none', 
                     boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)',

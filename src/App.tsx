@@ -12,6 +12,7 @@ import { ProcessesView } from './components/views/ProcessesView';
 import { DelimitationView } from './components/views/DelimitationView';
 import { RecordsView } from './components/views/RecordsView';
 import { HomeView } from './components/views/HomeView';
+import { LandingView } from './components/views/LandingView';
 import { ServicesView } from './components/views/ServicesView';
 import { TitlesView } from './components/views/TitlesView';
 import { StaffView, ReportsView } from './components/views/SimpleViews';
@@ -47,33 +48,33 @@ function AppContent() {
 
   useEffect(() => {
     localStorage.setItem('theme', theme);
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
   }, [theme]);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
-    navigate('/');
+    navigate('/dashboard');
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    navigate('/login');
+    navigate('/');
   };
 
-  if (!isLoggedIn && location.pathname !== '/login') {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (isLoggedIn && location.pathname === '/login') {
-    return <Navigate to="/" replace />;
+  // Public route: Landing Page
+  if (location.pathname === '/' && !isLoggedIn) {
+    return <LandingView />;
   }
 
   if (location.pathname === '/login') {
+    if (isLoggedIn) return <Navigate to="/dashboard" replace />;
     return <LoginView onLogin={handleLogin} theme={theme} setTheme={setTheme} />;
+  }
+
+  if (!isLoggedIn) {
+    return <Navigate to="/login" replace />;
   }
 
   return (

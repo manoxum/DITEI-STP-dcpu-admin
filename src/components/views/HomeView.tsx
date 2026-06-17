@@ -59,10 +59,10 @@ export function HomeView({ onEnter }: { onEnter: () => void }) {
       </motion.div>
       
       <div className="mt-24 space-y-2 opacity-40 group hover:opacity-100 transition-opacity">
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em]">
+        <p className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.4em]">
           MINISTÉRIO DAS INFRAESTRUTURAS E RECURSOS NATURAIS
         </p>
-        <p className="text-[9px] font-bold text-slate-300 dark:text-slate-800 uppercase tracking-[0.2em]">
+        <p className="text-[9px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em]">
           República Democrática de São Tomé e Príncipe
         </p>
       </div>
