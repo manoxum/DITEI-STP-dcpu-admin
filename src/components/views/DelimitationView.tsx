@@ -105,9 +105,70 @@ const INITIAL_IMAGES_MAP: Record<string, string[]> = {
 
 export function DelimitationView() {
   const navigate = useNavigate();
-  const [selectedProcess, setSelectedProcess] = useState<string | null>(null);
+  
+  // Load initial process list merged with dynamic processes
+  const [activeProcessList, setActiveProcessList] = useState(() => {
+    const defaultList = [...DELIMITATION_PROCESSES];
+    const cachedProcesses = localStorage.getItem('STP_PROCESSES');
+    if (cachedProcesses) {
+      try {
+        const parsed = JSON.parse(cachedProcesses);
+        parsed.forEach((p: any) => {
+          if (!defaultList.some(item => item.id === p.id)) {
+            defaultList.push({
+              id: p.id,
+              applicant: p.applicant,
+              location: p.location || 'Bairro do Hospital, Água Grande',
+              district: p.location?.includes('Mé-Zóchi') ? 'Mé-Zóchi' : 'Água Grande',
+              locality: p.location?.includes(',') ? p.location.split(',')[1].trim() : p.location || 'Bairro do Hospital',
+              date: p.date,
+              area: '1,200m²',
+              status: p.status === 'approved' ? 'ready' : 'pending',
+              usage: p.type === 'Legalização' ? 'Residencial' : 'Urbano Consolidado'
+            });
+          }
+        });
+      } catch (e) {}
+    }
+    return defaultList;
+  });
+
+  // Pre-load current process ID in local storage for Delimitation mapping module
+  const [selectedProcess, setSelectedProcess] = useState<string | null>(() => {
+    const cachedId = localStorage.getItem('STP_ACTIVE_DELIMIT_ID');
+    if (cachedId) {
+      // Verify if ID exists inside active list
+      return cachedId;
+    }
+    return activeProcessList[0]?.id || 'STP-PROCESS-8842';
+  });
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeProcessList, setActiveProcessList] = useState(DELIMITATION_PROCESSES);
+
+  // Fallback structures for custom or dynamically linked processes
+  const getFallbackGeometry = (procId: string) => {
+    if (INITIAL_GEOMETRIES[procId]) return INITIAL_GEOMETRIES[procId];
+    return [
+      { id: 'V1', x: 250, y: 140 },
+      { id: 'V2', x: 520, y: 100 },
+      { id: 'V3', x: 680, y: 220 },
+      { id: 'V4', x: 490, y: 410 }
+    ];
+  };
+
+  const getFallbackDocs = (procId: string) => {
+    if (INITIAL_DOCS_MAP[procId]) return INITIAL_DOCS_MAP[procId];
+    return [
+      { id: 'DOC-99', name: 'Requerimento de Delimitação Cadastral', type: 'PDF', size: '1.4 MB', date: 'Hoje', category: 'Administrative' }
+    ];
+  };
+
+  const getFallbackImages = (procId: string) => {
+    if (INITIAL_IMAGES_MAP[procId]) return INITIAL_IMAGES_MAP[procId];
+    return [
+      'https://images.unsplash.com/photo-1590247813693-5541d1c609fd?auto=format&fit=crop&q=80&w=400&h=400&sig=1'
+    ];
+  };
 
   // Core CAD / Editor States
   const [vertices, setVertices] = useState<Array<{id: string, x: number, y: number}>>([]);
@@ -166,15 +227,15 @@ export function DelimitationView() {
         try {
           setVertices(JSON.parse(cached));
         } catch(e) {
-          setVertices(INITIAL_GEOMETRIES[selectedProcess] || []);
+          setVertices(getFallbackGeometry(selectedProcess));
         }
       } else {
-        setVertices(INITIAL_GEOMETRIES[selectedProcess] || []);
+        setVertices(getFallbackGeometry(selectedProcess));
       }
 
       // Load documents & photos
-      setDocsList(INITIAL_DOCS_MAP[selectedProcess] || []);
-      setImagesList(INITIAL_IMAGES_MAP[selectedProcess] || []);
+      setDocsList(getFallbackDocs(selectedProcess));
+      setImagesList(getFallbackImages(selectedProcess));
       setRulerPoints([]);
       setTempRulerEnd(null);
     }
@@ -378,7 +439,33 @@ export function DelimitationView() {
       ]
     };
 
-    // Load existing local storage detail maps & insert new
+    // Load dynamic master database STP_TITLES_DB and insert new record
+    let titlesDb: Record<string, any> = {};
+    const cachedDb = localStorage.getItem('STP_TITLES_DB');
+    if (cachedDb) {
+      try {
+        titlesDb = JSON.parse(cachedDb);
+      } catch (e) {}
+    } else {
+      // Setup master default values in case first access is through delimitation view
+      titlesDb = {
+        'TIT-STP-2026-001': {
+          id: 'TIT-STP-2026-001',
+          utente: { name: 'António dos Santos', nif: '100234567', contact: '+239 990 1234', email: 'antonio.santo@email.st', address: 'Avenida Marginal, São Tomé' },
+          area: '1,200m²', status: 'issued', date: '15 Mai 2026', location: 'Pantufo, Água Grande'
+        }
+      };
+    }
+
+    titlesDb[titleRef] = {
+      ...titleDetailsObject,
+      area: `${Math.round(geomResults.area).toLocaleString('pt-PT')}m²`,
+      date: new Date().toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' }),
+      location: `${locality}, ${district}`,
+    };
+    localStorage.setItem('STP_TITLES_DB', JSON.stringify(titlesDb));
+
+    // Also populate legacy storage values for background backwards-compatibility
     let savedDetails: Record<string, any> = {};
     const detailsRaw = localStorage.getItem('STP_TITLES_DETAILS');
     if (detailsRaw) {
@@ -387,13 +474,11 @@ export function DelimitationView() {
     savedDetails[titleRef] = titleDetailsObject;
     localStorage.setItem('STP_TITLES_DETAILS', JSON.stringify(savedDetails));
 
-    // Also populate general listing STP_TITLES mock
     let savedList: any[] = [];
     const listRaw = localStorage.getItem('STP_TITLES');
     if (listRaw) {
       try { savedList = JSON.parse(listRaw); } catch(e) {}
     } else {
-      // Default baseline
       savedList = [
         { id: 'TIT-STP-2026-001', utente: 'António dos Santos', area: '1,200m²', status: 'issued', date: '15 Mai 2026', location: 'Pantufo, Água Grande' },
         { id: 'TIT-STP-2026-002', utente: 'Maria da Silva', area: '850m²', status: 'pending', date: '12 Mai 2026', location: 'Trindade, Mé-Zóchi' },
@@ -403,7 +488,6 @@ export function DelimitationView() {
       ];
     }
     
-    // Add if not already included
     if (!savedList.find(t => t.id === titleRef)) {
       savedList.unshift({
         id: titleRef,

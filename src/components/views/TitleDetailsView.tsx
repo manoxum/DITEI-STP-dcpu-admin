@@ -191,11 +191,21 @@ export function TitleDetailsView() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Load dynamically by id, fall back to "TIT-STP-2026-001"
-  const currentId = id && TITLES_MAP[id] ? id : 'TIT-STP-2026-001';
-  const [data, setData] = useState<any>(TITLES_MAP[currentId]);
+  // Load unified database from localStorage or fallback
+  const [db, setDb] = useState<Record<string, any>>(() => {
+    const cached = localStorage.getItem('STP_TITLES_DB');
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {}
+    }
+    return TITLES_MAP;
+  });
 
-  // Handle dynamic local simulations
+  const currentId = id && db[id] ? id : 'TIT-STP-2026-001';
+  const data = db[currentId];
+
+  // Handle dynamic local simulations & save to main DB copy
   const handleTransitionState = (newStatus: string, eventName: string, detailText: string) => {
     const updatedHistory = [
       {
@@ -207,11 +217,17 @@ export function TitleDetailsView() {
       },
       ...data.history
     ];
-    setData({
+    const updatedTitleObj = {
       ...data,
       status: newStatus,
       history: updatedHistory
-    });
+    };
+    const newDb = {
+      ...db,
+      [currentId]: updatedTitleObj
+    };
+    setDb(newDb);
+    localStorage.setItem('STP_TITLES_DB', JSON.stringify(newDb));
   };
 
   // Resolve status-specific labels and styles
