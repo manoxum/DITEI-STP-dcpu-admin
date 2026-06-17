@@ -851,17 +851,17 @@ export function TitlesView() {
            </div>
 
            {/* Efficiency Increase badge */}
-           <div className="bg-slate-900 p-8 rounded-[2.5rem] text-white relative overflow-hidden">
+           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[2.5rem] relative overflow-hidden shadow-sm">
              <div className="relative z-10">
-               <div className="w-11 h-11 bg-white/10 rounded-2xl flex items-center justify-center mb-5">
-                 <TrendingUp className="w-5.5 h-5.5 text-emerald-400" />
+               <div className="w-11 h-11 bg-emerald-500/10 dark:bg-white/10 rounded-2xl flex items-center justify-center mb-5">
+                 <TrendingUp className="w-5.5 h-5.5 text-emerald-600 dark:text-emerald-400" />
                </div>
-               <h4 className="font-display font-black text-2xl tracking-tighter leading-none mb-1">+18.5%</h4>
-               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">
+               <h4 className="font-display font-black text-2xl tracking-tighter leading-none mb-1 text-slate-900 dark:text-white">+18.5%</h4>
+               <p className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest leading-relaxed">
                  Aprovação e segurança fiduciária consolidada neste trimestre.
                </p>
              </div>
-             <div className="absolute bottom-0 right-0 w-32 h-32 bg-emerald-500/20 rounded-full blur-[65px] translate-y-1/2 translate-x-1/2" />
+             <div className="absolute bottom-0 right-0 w-32 h-32 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full blur-[65px] translate-y-1/2 translate-x-1/2" />
            </div>
         </div>
       </div>

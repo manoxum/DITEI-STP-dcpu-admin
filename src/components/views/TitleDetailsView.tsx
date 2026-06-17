@@ -448,7 +448,7 @@ export function TitleDetailsView() {
           </div>
 
           {/* Map Preview */}
-          <div className="bg-slate-950 rounded-[3rem] h-[450px] relative overflow-hidden group shadow-2xl">
+          <div className="bg-slate-900 dark:bg-slate-950 rounded-[3rem] h-[450px] relative overflow-hidden group shadow-2xl">
              <div className="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1541462608141-ad6b3eb16995?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center"></div>
              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
              
@@ -536,22 +536,22 @@ export function TitleDetailsView() {
           
           {/* Status Box (Inviolabilidade ou Outras Ações Administrativas) */}
           {data.status === 'issued' ? (
-            <div className="bg-slate-900 dark:bg-neutral-950 p-10 rounded-[2.5rem] text-white relative overflow-hidden shadow-2xl">
+            <div className="bg-white dark:bg-slate-900 border border-emerald-200 dark:border-slate-700 p-10 rounded-[2.5rem] relative overflow-hidden shadow-sm">
                <div className="relative z-10">
-                 <div className="w-16 h-16 bg-emerald-500/20 rounded-2xl flex items-center justify-center mb-8 border border-emerald-500/30">
-                   <ShieldCheck className="w-8 h-8 text-emerald-400" />
+                 <div className="w-16 h-16 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-2xl flex items-center justify-center mb-8 border border-emerald-500/20 dark:border-emerald-500/30">
+                   <ShieldCheck className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
                  </div>
-                 <h3 className="font-display font-black text-2xl tracking-tight mb-4">Certificação Digital Ativa</h3>
-                 <p className="text-slate-400 text-sm font-medium leading-relaxed mb-10">
+                 <h3 className="font-display font-black text-2xl tracking-tight mb-4 text-slate-900 dark:text-white">Certificação Digital Ativa</h3>
+                 <p className="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-10">
                    Este documento possui assinatura eletrónica criptográfica qualificada e está homologado na rede oficial do Estado Santomense.
                  </p>
-                 <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center shrink-0">
-                      <Check className="w-5 h-5 text-emerald-400" />
+                 <div className="flex items-center gap-4 p-4 rounded-2xl bg-emerald-50 dark:bg-white/5 border border-emerald-100 dark:border-white/10">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center shrink-0">
+                      <Check className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <div>
                       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Garantia Legal</p>
-                      <p className="text-xs font-bold">Documento Permanente</p>
+                      <p className="text-xs font-bold text-slate-900 dark:text-white">Documento Permanente</p>
                     </div>
                  </div>
                </div>
@@ -574,23 +574,23 @@ export function TitleDetailsView() {
                </div>
             </div>
           ) : (
-            <div className="bg-slate-950 p-10 rounded-[2.5rem] text-white relative overflow-hidden">
+            <div className="bg-white dark:bg-slate-950 border border-blue-200 dark:border-slate-800 p-10 rounded-[2.5rem] relative overflow-hidden shadow-sm">
                <div className="relative z-10">
-                 <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-8 border border-blue-500/30">
-                   <Clock className="w-8 h-8 text-blue-400" />
+                 <div className="w-16 h-16 bg-blue-500/10 dark:bg-blue-500/20 rounded-2xl flex items-center justify-center mb-8 border border-blue-500/20 dark:border-blue-500/30">
+                   <Clock className="w-8 h-8 text-blue-500 dark:text-blue-400" />
                  </div>
-                 <h3 className="font-display font-black text-2xl tracking-tight mb-4 text-white">Etapa de Fiscalização</h3>
-                 <p className="text-slate-400 text-sm font-medium leading-relaxed mb-10">
+                 <h3 className="font-display font-black text-2xl tracking-tight mb-4 text-slate-900 dark:text-white">Etapa de Fiscalização</h3>
+                 <p className="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-10">
                    Requerimento em processamento. Sujeito às normas legais santomenses aplicáveis à concessão territorial.
                  </p>
                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10">
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10">
                       <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                      <p className="text-xs font-bold">Levantamento SIG Terminado</p>
+                      <p className="text-xs font-bold text-slate-800 dark:text-white">Levantamento SIG Terminado</p>
                     </div>
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/10 opacity-60">
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 opacity-60">
                       <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                      <p className="text-xs font-bold">Aguardando Aval da Conservatória</p>
+                      <p className="text-xs font-bold text-slate-800 dark:text-white">Aguardando Aval da Conservatória</p>
                     </div>
                  </div>
                </div>

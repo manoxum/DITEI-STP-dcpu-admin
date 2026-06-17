@@ -1363,7 +1363,7 @@ export function ProcessesView() {
                   </button>
                   <button 
                     onClick={() => setSelectedProcess(null)}
-                    className="flex-1 py-3.5 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:opacity-90 font-bold text-xs uppercase tracking-wider transition-colors"
+                    className="flex-1 py-3.5 rounded-xl premium-gradient text-white hover:opacity-90 font-bold text-xs uppercase tracking-wider transition-all shadow-sm shadow-emerald-500/20"
                   >
                     Fechar Dossier
                   </button>

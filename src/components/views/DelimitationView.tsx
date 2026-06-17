@@ -1289,17 +1289,17 @@ export function DelimitationView() {
               </div>
 
               {/* HIGH FIDELITY SYSTEM ACCENTS (No mock logs/telemetry but standard certification references) */}
-              <div className="p-8 rounded-[2.5rem] bg-slate-900 border border-slate-800 text-white relative overflow-hidden shadow-sm">
+              <div className="p-8 rounded-[2.5rem] bg-emerald-50 dark:bg-slate-900 border border-emerald-200 dark:border-slate-800 relative overflow-hidden shadow-sm">
                  <div className="relative z-10 space-y-4">
                    <div className="flex items-center gap-3">
-                     <Sparkles className="text-emerald-400 w-5 h-5" />
-                     <h4 className="font-display font-black text-sm uppercase tracking-wider text-white">Certificador SIG Criptográfico</h4>
+                     <Sparkles className="text-emerald-600 dark:text-emerald-400 w-5 h-5" />
+                     <h4 className="font-display font-black text-sm uppercase tracking-wider text-slate-900 dark:text-white">Certificador SIG Criptográfico</h4>
                    </div>
-                   <p className="text-slate-400 text-xs font-medium leading-relaxed">
+                   <p className="text-slate-500 dark:text-slate-400 text-xs font-medium leading-relaxed">
                      Esta estação gerará automaticamente um comprovativo eletrónico georreferenciado e uma planta de implantação oficial com hash de integridade irreversível (SHA-256).
                    </p>
                  </div>
-                 <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-[40px] translate-y-[-20px]" />
+                 <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-[40px] translate-y-[-20px]" />
               </div>
 
             </div>

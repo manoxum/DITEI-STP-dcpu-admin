@@ -244,7 +244,7 @@ export function ServicesView() {
                     setStep(1);
                     setSelectedService(null);
                   }}
-                  className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-10 py-5 rounded-2xl font-bold text-lg hover:scale-105 transition-transform"
+                  className="premium-gradient text-white px-10 py-5 rounded-2xl font-bold text-lg hover:scale-105 transition-transform shadow-lg shadow-emerald-500/20"
                 >
                   Novo Atendimento
                 </button>
@@ -255,31 +255,31 @@ export function ServicesView() {
 
         {/* Info Sidebar */}
         <div className="space-y-8">
-          <div className="bg-slate-900 dark:bg-slate-800 text-white p-10 rounded-[2.5rem] relative overflow-hidden shadow-2xl shadow-slate-900/20">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-10 rounded-[2.5rem] relative overflow-hidden shadow-sm">
              <div className="relative z-10">
-               <h3 className="font-display font-black text-2xl tracking-tight mb-6">Resumo em Tempo Real</h3>
+               <h3 className="font-display font-black text-2xl tracking-tight mb-6 text-slate-900 dark:text-white">Resumo em Tempo Real</h3>
                <div className="space-y-6">
                  <div className="flex gap-4">
-                   <div className="w-12 h-12 rounded-2xl bg-white/10 flex shrink-0 items-center justify-center">
-                     <Clock className="w-6 h-6 text-emerald-400" />
+                   <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 dark:bg-white/10 flex shrink-0 items-center justify-center">
+                     <Clock className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
                    </div>
                    <div>
                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Média de Espera</p>
-                     <p className="text-lg font-bold text-white">14 Minutos</p>
+                     <p className="text-lg font-bold text-slate-900 dark:text-white">14 Minutos</p>
                    </div>
                  </div>
                  <div className="flex gap-4">
-                   <div className="w-12 h-12 rounded-2xl bg-white/10 flex shrink-0 items-center justify-center">
-                     <Users className="w-6 h-6 text-blue-400" />
+                   <div className="w-12 h-12 rounded-2xl bg-blue-500/10 dark:bg-white/10 flex shrink-0 items-center justify-center">
+                     <Users className="w-6 h-6 text-blue-500 dark:text-blue-400" />
                    </div>
                    <div>
                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Utentes em Fila</p>
-                     <p className="text-lg font-bold text-white">4 Pessoas</p>
+                     <p className="text-lg font-bold text-slate-900 dark:text-white">4 Pessoas</p>
                    </div>
                  </div>
                </div>
              </div>
-             <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
+             <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
           </div>
 
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[2.5rem] shadow-sm">

@@ -1,19 +1,20 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { 
-  ArrowRight, 
-  Map, 
-  ShieldCheck, 
-  Database, 
-  Globe, 
-  Layers, 
-  Search, 
+import {
+  ArrowRight,
+  Map,
+  ShieldCheck,
+  Database,
+  Globe,
+  Layers,
+  Search,
   FileCheck,
   ChevronRight,
   Landmark
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../../lib/utils';
+import { ThemeToggle } from '../AdminLayout';
 
 const FEATURES = [
   {
@@ -47,9 +48,9 @@ export function LandingView() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans overflow-x-hidden transition-colors duration-500">
+    <div className="min-h-screen bg-slate-200 dark:bg-slate-950 font-sans overflow-x-hidden transition-colors duration-500">
       {/* Navigation */}
-      <nav className="fixed top-0 inset-x-0 h-24 flex items-center justify-between px-6 md:px-20 z-50 backdrop-blur-xl bg-white/70 dark:bg-slate-950/70 border-b border-slate-200/60 dark:border-slate-800/50">
+      <nav className="fixed top-0 inset-x-0 h-24 flex items-center justify-between px-6 md:px-20 z-50 backdrop-blur-xl bg-slate-200/90 dark:bg-slate-950/70 border-b border-slate-300/60 dark:border-slate-800/50">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl premium-gradient p-0.5 shadow-lg shadow-emerald-500/20">
             <div className="w-full h-full rounded-[0.6rem] bg-white dark:bg-slate-900 flex items-center justify-center">
@@ -61,12 +62,15 @@ export function LandingView() {
             <span className="text-[10px] font-black text-emerald-600 block leading-none tracking-[0.2em] -mt-1 uppercase opacity-80">STP</span>
           </div>
         </div>
-        <button 
-          onClick={() => navigate('/login')}
-          className="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm tracking-widest uppercase hover:scale-105 transition-all shadow-md"
-        >
-          Entrar
-        </button>
+        <div className="flex items-center gap-3">
+          <ThemeToggle compact />
+          <button
+            onClick={() => navigate('/login')}
+            className="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm tracking-widest uppercase hover:scale-105 transition-all shadow-md"
+          >
+            Entrar
+          </button>
+        </div>
       </nav>
 
       {/* Hero Section */}

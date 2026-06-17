@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { AdminLayout } from './components/AdminLayout';
 import { LoginView } from './components/LoginView';
 import { DashboardView } from './components/views/DashboardView';
@@ -23,38 +24,22 @@ import { AdminSection } from './types';
 
 export default function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </ThemeProvider>
   );
 }
 
 function AppContent() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     localStorage.setItem('isLoggedIn', isLoggedIn.toString());
   }, [isLoggedIn]);
-
-  // Load theme preference
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setTheme('dark');
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('theme', theme);
-    const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add(theme);
-  }, [theme]);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -73,7 +58,7 @@ function AppContent() {
 
   if (location.pathname === '/login') {
     if (isLoggedIn) return <Navigate to="/dashboard" replace />;
-    return <LoginView onLogin={handleLogin} theme={theme} setTheme={setTheme} />;
+    return <LoginView onLogin={handleLogin} />;
   }
 
   if (!isLoggedIn) {
@@ -81,11 +66,7 @@ function AppContent() {
   }
 
   return (
-    <AdminLayout 
-      onLogout={handleLogout}
-      theme={theme}
-      setTheme={setTheme}
-    >
+    <AdminLayout onLogout={handleLogout}>
       <Routes>
         <Route path="/" element={<HomeView onEnter={() => navigate('/dashboard')} />} />
         <Route path="/dashboard" element={<DashboardView />} />
@@ -103,4 +84,3 @@ function AppContent() {
     </AdminLayout>
   );
 }
-

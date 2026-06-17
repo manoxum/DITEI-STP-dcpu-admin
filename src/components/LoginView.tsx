@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { cn } from '../lib/utils';
-import { Shield, Mail, Lock, ArrowRight, Sun, Moon } from 'lucide-react';
+import { Shield, Mail, Lock, ArrowRight } from 'lucide-react';
+import { ThemeToggle } from './AdminLayout';
 
 interface LoginViewProps {
   onLogin: () => void;
-  theme: 'light' | 'dark';
-  setTheme: (theme: 'light' | 'dark') => void;
 }
 
-export function LoginView({ onLogin, theme, setTheme }: LoginViewProps) {
+export function LoginView({ onLogin }: LoginViewProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +16,6 @@ export function LoginView({ onLogin, theme, setTheme }: LoginViewProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate login
     setTimeout(() => {
       setIsLoading(false);
       onLogin();
@@ -25,18 +23,12 @@ export function LoginView({ onLogin, theme, setTheme }: LoginViewProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 dark:bg-slate-950 transition-colors duration-700">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-200 dark:bg-slate-950 transition-colors duration-700">
       <div className="absolute top-8 right-8 flex gap-4">
-         <button 
-           onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-           className="p-3 rounded-xl glass-card hover:scale-110 transition-all border-slate-200 dark:border-slate-800"
-         >
-           <Sun className="w-5 h-5 dark:hidden text-slate-600" />
-           <Moon className="w-5 h-5 hidden dark:block text-emerald-400" />
-         </button>
+        <ThemeToggle />
       </div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
@@ -60,13 +52,13 @@ export function LoginView({ onLogin, theme, setTheme }: LoginViewProps) {
               <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1 uppercase tracking-wider">Acesso Institucional</label>
               <div className="relative group">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
-                <input 
+                <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="utilizador@dsgc.st"
-                  className="w-full pl-12 pr-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 font-medium transition-all"
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 font-medium transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
                 />
               </div>
             </div>
@@ -77,18 +69,18 @@ export function LoginView({ onLogin, theme, setTheme }: LoginViewProps) {
               </div>
               <div className="relative group">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
-                <input 
+                <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-12 pr-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 font-medium transition-all"
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 font-medium transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
                 />
               </div>
             </div>
 
-            <button 
+            <button
               disabled={isLoading}
               className="w-full py-4.5 rounded-2xl premium-gradient text-white font-bold text-lg flex items-center justify-center gap-3 hover:shadow-xl hover:shadow-emerald-500/20 active:scale-[0.98] transition-all disabled:opacity-50"
             >
