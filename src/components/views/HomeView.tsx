@@ -8,7 +8,7 @@ export function HomeView({ onEnter }: { onEnter: () => void }) {
   if (hour >= 18) greeting = "Boa noite";
 
   return (
-    <div className="h-[75vh] flex flex-col items-center justify-center text-center px-6">
+    <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-10 sm:px-6">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -19,12 +19,12 @@ export function HomeView({ onEnter }: { onEnter: () => void }) {
           <Shield className="w-12 h-12 text-white" />
         </div>
         
-        <h1 className="text-6xl font-display font-black tracking-tighter mb-6 leading-[0.9]">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-black tracking-tighter mb-6 leading-[0.9]">
           {greeting}, <br />
           <span className="bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent italic">Engr. Alberto Costa</span>
         </h1>
         
-        <p className="text-xl text-slate-500 dark:text-slate-400 mb-16 font-medium max-w-xl mx-auto leading-relaxed">
+        <p className="text-base sm:text-xl text-slate-500 dark:text-slate-400 mb-10 sm:mb-16 font-medium max-w-xl mx-auto leading-relaxed">
           O portal administrativo da DSGC está pronto para a sua supervisão técnico-geográfica.
         </p>
 
@@ -48,7 +48,7 @@ export function HomeView({ onEnter }: { onEnter: () => void }) {
 
         <button 
           onClick={onEnter}
-          className="group relative px-12 py-6 rounded-[2rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-xl shadow-2xl hover:shadow-emerald-500/20 transition-all duration-500 overflow-hidden active:scale-95"
+          className="group relative w-full sm:w-auto px-8 sm:px-12 py-5 sm:py-6 rounded-[2rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-lg sm:text-xl shadow-2xl hover:shadow-emerald-500/20 transition-all duration-500 overflow-hidden active:scale-95"
         >
           <span className="relative z-10 flex items-center gap-4">
              Iniciar Dashboard
@@ -58,7 +58,7 @@ export function HomeView({ onEnter }: { onEnter: () => void }) {
         </button>
       </motion.div>
       
-      <div className="mt-24 space-y-2 opacity-40 group hover:opacity-100 transition-opacity">
+      <div className="mt-14 sm:mt-24 space-y-2 opacity-40 group hover:opacity-100 transition-opacity">
         <p className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.4em]">
           MINISTÉRIO DAS INFRAESTRUTURAS E RECURSOS NATURAIS
         </p>

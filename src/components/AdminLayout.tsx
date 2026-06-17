@@ -152,20 +152,20 @@ export function AdminLayout({ children, onLogout }: AdminLayoutProps) {
         {/* Main Content */}
         <main
           className={cn(
-            "flex-1 flex flex-col min-h-screen transition-all duration-300",
+            "flex-1 flex flex-col min-h-screen min-w-0 transition-all duration-300",
             isMobile ? "ml-0" : isSidebarOpen ? "ml-[280px]" : "ml-[80px]"
           )}
         >
           {/* Header */}
-          <header className="h-24 bg-slate-200/90 dark:bg-slate-950/70 backdrop-blur-2xl border-b border-slate-300/60 dark:border-slate-800/50 flex items-center justify-between px-4 sm:px-10 sticky top-0 z-40 transition-colors duration-500">
-            <div className="flex items-center gap-4 lg:gap-6 flex-1 max-w-xl">
+          <header className="min-h-24 bg-slate-200/90 dark:bg-slate-950/70 backdrop-blur-2xl border-b border-slate-300/60 dark:border-slate-800/50 flex flex-wrap items-center justify-between gap-3 px-3 py-3 sm:px-6 lg:px-10 sticky top-0 z-40 transition-colors duration-500">
+            <div className="flex min-w-0 items-center gap-3 lg:gap-6 flex-1">
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 className="p-2.5 bg-slate-300/60 dark:bg-slate-900 hover:bg-slate-300 dark:hover:bg-slate-800 rounded-xl transition-all shrink-0"
               >
                 <Menu className="w-6 h-6" />
               </button>
-              <div className="relative group hidden sm:block flex-1">
+              <div className="relative group hidden md:block flex-1 min-w-0">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
                 <input
                   type="text"
@@ -175,15 +175,15 @@ export function AdminLayout({ children, onLogout }: AdminLayoutProps) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-3 ml-2 sm:ml-4">
-              <ThemeToggle />
+            <div className="flex items-center gap-2 sm:gap-3 ml-auto">
+              <ThemeToggle compact={isMobile} />
 
-              <button className="relative p-3 bg-slate-300/60 dark:bg-slate-900 hover:bg-slate-300 dark:hover:bg-slate-800 rounded-xl transition-all group text-slate-500 shrink-0">
+              <button className="hidden sm:inline-flex relative p-3 bg-slate-300/60 dark:bg-slate-900 hover:bg-slate-300 dark:hover:bg-slate-800 rounded-xl transition-all group text-slate-500 shrink-0">
                 <Bell className="w-5.5 h-5.5 group-hover:text-emerald-500 transition-colors" />
                 <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-950 animate-pulse"></span>
               </button>
 
-              <div className="flex items-center gap-4 pl-4 sm:pl-6 border-l border-slate-200 dark:border-slate-800 ml-1 sm:ml-2">
+              <div className="flex items-center gap-3 sm:gap-4 pl-3 sm:pl-6 border-l border-slate-200 dark:border-slate-800 ml-1 sm:ml-2">
                 <div className="text-right hidden xl:block">
                   <p className="text-sm font-black leading-none tracking-tight">Engr. Alberto Costa</p>
                   <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-black uppercase tracking-[0.1em] mt-1.5 opacity-80 whitespace-nowrap">Diretor Técnico</p>
@@ -198,7 +198,7 @@ export function AdminLayout({ children, onLogout }: AdminLayoutProps) {
           </header>
 
           {/* Content Area */}
-          <div className="flex-1 p-4 sm:p-8 overflow-y-auto">
+          <div className="flex-1 min-w-0 p-3 sm:p-6 lg:p-8 overflow-y-auto">
             <AnimatePresence mode="wait">
               <motion.div
                 key={location.pathname}

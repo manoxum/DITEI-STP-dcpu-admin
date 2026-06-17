@@ -43,7 +43,7 @@ export function ServicesView() {
   return (
     <div className="space-y-10 pb-20">
       <div>
-        <h1 className="text-4xl font-display font-black tracking-tighter">Atendimento ao Cidadão</h1>
+        <h1 className="text-3xl sm:text-4xl font-display font-black tracking-tighter">Atendimento ao Cidadão</h1>
         <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Registo presencial de pedidos e gestão de utentes.</p>
       </div>
 
@@ -203,7 +203,7 @@ export function ServicesView() {
                     </div>
                   </div>
 
-                  <div className="mt-10 flex gap-4">
+                  <div className="mt-10 flex flex-col-reverse sm:flex-row gap-4">
                     <button 
                       onClick={() => setStep(4)}
                       className="flex-1 premium-gradient text-white py-5 rounded-2xl font-bold text-lg shadow-xl shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
@@ -226,13 +226,13 @@ export function ServicesView() {
                 key="step4"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-20 px-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] shadow-sm"
+                className="text-center py-14 sm:py-20 px-5 sm:px-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] shadow-sm"
               >
                 <div className="w-24 h-24 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-emerald-500/30">
                   <CheckCircle2 className="w-12 h-12 text-white" />
                 </div>
-                <h2 className="text-4xl font-display font-black tracking-tight mb-4">Pedido Registado!</h2>
-                <p className="text-xl text-slate-500 dark:text-slate-400 mb-10 max-w-lg mx-auto leading-relaxed">
+                <h2 className="text-3xl sm:text-4xl font-display font-black tracking-tight mb-4">Pedido Registado!</h2>
+                <p className="text-base sm:text-xl text-slate-500 dark:text-slate-400 mb-10 max-w-lg mx-auto leading-relaxed">
                   O pedido foi inserido com sucesso no sistema. O utente receberá uma notificação via SMS com o número do processo.
                 </p>
                 <div className="bg-emerald-500/5 border border-emerald-500/20 p-8 rounded-3xl max-w-md mx-auto mb-12">
@@ -244,7 +244,7 @@ export function ServicesView() {
                     setStep(1);
                     setSelectedService(null);
                   }}
-                  className="premium-gradient text-white px-10 py-5 rounded-2xl font-bold text-lg hover:scale-105 transition-transform shadow-lg shadow-emerald-500/20"
+                  className="premium-gradient text-white w-full sm:w-auto px-10 py-5 rounded-2xl font-bold text-lg hover:scale-105 transition-transform shadow-lg shadow-emerald-500/20"
                 >
                   Novo Atendimento
                 </button>
@@ -255,7 +255,7 @@ export function ServicesView() {
 
         {/* Info Sidebar */}
         <div className="space-y-8">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-10 rounded-[2.5rem] relative overflow-hidden shadow-sm">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-10 rounded-[2.5rem] relative overflow-hidden shadow-sm">
              <div className="relative z-10">
                <h3 className="font-display font-black text-2xl tracking-tight mb-6 text-slate-900 dark:text-white">Resumo em Tempo Real</h3>
                <div className="space-y-6">

@@ -50,7 +50,7 @@ export function LandingView() {
   return (
     <div className="min-h-screen bg-slate-200 dark:bg-slate-950 font-sans overflow-x-hidden transition-colors duration-500">
       {/* Navigation */}
-      <nav className="fixed top-0 inset-x-0 h-24 flex items-center justify-between px-6 md:px-20 z-50 backdrop-blur-xl bg-slate-200/90 dark:bg-slate-950/70 border-b border-slate-300/60 dark:border-slate-800/50">
+      <nav className="fixed top-0 inset-x-0 flex flex-col gap-4 px-4 py-4 sm:h-24 sm:flex-row sm:items-center sm:justify-between sm:px-6 md:px-20 z-50 backdrop-blur-xl bg-slate-200/90 dark:bg-slate-950/70 border-b border-slate-300/60 dark:border-slate-800/50">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl premium-gradient p-0.5 shadow-lg shadow-emerald-500/20">
             <div className="w-full h-full rounded-[0.6rem] bg-white dark:bg-slate-900 flex items-center justify-center">
@@ -62,11 +62,11 @@ export function LandingView() {
             <span className="text-[10px] font-black text-emerald-600 block leading-none tracking-[0.2em] -mt-1 uppercase opacity-80">STP</span>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
           <ThemeToggle compact />
           <button
             onClick={() => navigate('/login')}
-            className="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm tracking-widest uppercase hover:scale-105 transition-all shadow-md"
+            className="px-5 sm:px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm tracking-widest uppercase hover:scale-105 transition-all shadow-md"
           >
             Entrar
           </button>
@@ -74,29 +74,22 @@ export function LandingView() {
       </nav>
 
       {/* Hero Section */}
-      <div className="relative pt-40 pb-32 px-6 md:px-20 overflow-hidden">
+      <div className="relative pt-44 sm:pt-40 pb-20 sm:pb-32 px-4 sm:px-6 md:px-20 overflow-hidden">
         {/* Animated Background Elements */}
         <div className="absolute top-0 right-0 w-1/2 h-full bg-emerald-500/5 dark:bg-emerald-500/[0.03] blur-[120px] -z-10 rounded-full"></div>
         <div className="absolute -bottom-20 -left-20 w-1/3 h-1/2 bg-blue-500/5 dark:bg-blue-500/[0.03] blur-[100px] -z-10 rounded-full"></div>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <motion.div 
             initial={{ opacity: 0, x: -30 }} 
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-[0.3em] mb-8">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              Digitalização do Território Nacional
-            </div>
-            <h1 className="text-6xl md:text-8xl font-display font-black tracking-tighter text-slate-900 dark:text-white leading-[0.9] mb-8">
+            <h1 className="text-4xl sm:text-6xl md:text-8xl font-display font-black tracking-tighter text-slate-900 dark:text-white leading-[0.9] mb-6 sm:mb-8">
               O Futuro da <br/>
-              <span className="premium-gradient-text">Terra em Santola</span>
+              <span className="premium-gradient-text">Terra em STP</span>
             </h1>
-            <p className="text-xl text-slate-500 dark:text-slate-400 font-medium max-w-lg mb-10 leading-relaxed transition-colors">
+            <p className="text-base sm:text-xl text-slate-500 dark:text-slate-400 font-medium max-w-lg mb-8 sm:mb-10 leading-relaxed transition-colors">
               Sistema Integrado de Gestão de Terras (SiGeT-STP). Uma plataforma robusta para a modernização da DSGC, promovendo transparência e soberania digital.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -118,7 +111,7 @@ export function LandingView() {
             transition={{ duration: 1, delay: 0.2 }}
             className="relative"
           >
-            <div className="relative aspect-square max-w-lg mx-auto">
+            <div className="relative aspect-square max-w-sm sm:max-w-lg mx-auto">
               {/* Decorative Rings */}
               <div className="absolute inset-0 border-[40px] border-emerald-500/5 dark:border-emerald-500/[0.02] rounded-[4rem] animate-[spin_20s_linear_infinite]"></div>
               <div className="absolute inset-[10%] border-[2px] border-dashed border-slate-200 dark:border-slate-800 rounded-[3.5rem] animate-[spin_30s_linear_infinite_reverse]"></div>
@@ -127,7 +120,7 @@ export function LandingView() {
               <motion.div 
                 animate={{ y: [0, -20, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-10 -left-10 bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-2xl shadow-slate-900/10 dark:shadow-black border border-slate-100 dark:border-slate-800 z-10 w-48 transition-colors duration-500"
+                className="absolute top-10 -left-3 sm:-left-10 bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-3xl shadow-2xl shadow-slate-900/10 dark:shadow-black border border-slate-100 dark:border-slate-800 z-10 w-36 sm:w-48 transition-colors duration-500"
               >
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4 text-emerald-500">
                   <Globe className="w-5 h-5" />
@@ -139,7 +132,7 @@ export function LandingView() {
               <motion.div 
                 animate={{ y: [0, 20, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute bottom-20 -right-10 bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-2xl shadow-slate-900/10 dark:shadow-black border border-slate-100 dark:border-slate-800 z-10 w-48 transition-colors duration-500"
+                className="absolute bottom-12 -right-3 sm:bottom-20 sm:-right-10 bg-white dark:bg-slate-900 p-4 sm:p-6 rounded-3xl shadow-2xl shadow-slate-900/10 dark:shadow-black border border-slate-100 dark:border-slate-800 z-10 w-36 sm:w-48 transition-colors duration-500"
               >
                 <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4 text-blue-500">
                   <Database className="w-5 h-5" />
@@ -167,7 +160,7 @@ export function LandingView() {
       </div>
 
       {/* Pillars Section */}
-      <section className="py-32 px-6 md:px-20 bg-white dark:bg-slate-900 transition-colors duration-500">
+      <section className="py-20 sm:py-32 px-4 sm:px-6 md:px-20 bg-white dark:bg-slate-900 transition-colors duration-500">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-24">
             <h2 className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.4em] mb-4">Pilares do Sistema</h2>
@@ -208,10 +201,10 @@ export function LandingView() {
       </section>
 
       {/* Stats/Utility Section */}
-      <section className="py-32 px-6 md:px-20 relative overflow-hidden">
+      <section className="py-20 sm:py-32 px-4 sm:px-6 md:px-20 relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            <div className="order-2 lg:order-1 grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div className="order-2 lg:order-1 grid grid-cols-1 sm:grid-cols-2 gap-6">
               {UTILITIES.map((u, i) => (
                 <div key={i} className="p-8 rounded-[2.5rem] bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border border-white dark:border-slate-800 flex flex-col items-center text-center group hover:bg-emerald-500 hover:text-white transition-all duration-500 cursor-default shadow-sm">
                   <u.icon className="w-8 h-8 text-emerald-500 group-hover:text-white mb-4 transition-colors" />
@@ -222,7 +215,7 @@ export function LandingView() {
             
             <div className="order-1 lg:order-2">
               <h2 className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.4em] mb-4">Utilidades & Propósito</h2>
-              <p className="text-5xl font-display font-black tracking-tighter text-slate-900 dark:text-white mb-8 leading-[1.1]">
+              <p className="text-3xl sm:text-5xl font-display font-black tracking-tighter text-slate-900 dark:text-white mb-8 leading-[1.1]">
                 Eficiência Operacional para a DSGC.
               </p>
               <div className="space-y-6">
@@ -247,17 +240,17 @@ export function LandingView() {
       </section>
 
       {/* Footer / CTA */}
-      <footer className="pt-32 pb-20 px-6 md:px-20 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 transition-colors duration-500">
+      <footer className="pt-20 sm:pt-32 pb-20 px-4 sm:px-6 md:px-20 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 transition-colors duration-500">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-slate-900 rounded-[4rem] p-12 md:p-24 text-center relative overflow-hidden shadow-2xl mb-24">
+          <div className="bg-slate-900 rounded-[2.5rem] sm:rounded-[4rem] p-8 sm:p-12 md:p-24 text-center relative overflow-hidden shadow-2xl mb-24">
              <div className="relative z-10">
                 <Landmark className="w-16 h-16 text-emerald-400 mx-auto mb-10" />
-                <h2 className="text-4xl md:text-6xl font-display font-black tracking-tighter text-white mb-10">
+                <h2 className="text-3xl md:text-6xl font-display font-black tracking-tighter text-white mb-10">
                   Pronto para transformar a <br className="hidden md:block" /> administração de terras?
                 </h2>
                 <button 
                   onClick={() => navigate('/login')}
-                  className="px-16 py-6 rounded-2xl bg-white text-slate-900 font-black tracking-[0.2em] uppercase text-sm hover:scale-105 active:scale-95 transition-all shadow-xl"
+                  className="w-full sm:w-auto px-10 sm:px-16 py-5 sm:py-6 rounded-2xl bg-white text-slate-900 font-black tracking-[0.2em] uppercase text-sm hover:scale-105 active:scale-95 transition-all shadow-xl"
                 >
                   Entrar no Portal
                 </button>
@@ -282,7 +275,7 @@ export function LandingView() {
               </p>
             </div>
 
-            <div className="flex gap-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            <div className="flex flex-wrap justify-center gap-6 sm:gap-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                <a href="#" className="hover:text-emerald-500 transition-colors">Termos</a>
                <a href="#" className="hover:text-emerald-500 transition-colors">Privacidade</a>
                <a href="#" className="hover:text-emerald-500 transition-colors">Suporte</a>

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { cn } from '../lib/utils';
-import { Shield, Mail, Lock, ArrowRight } from 'lucide-react';
+import { Shield, Mail, Lock, ArrowRight, ArrowLeft } from 'lucide-react';
 import { ThemeToggle } from './AdminLayout';
+import { Link } from 'react-router-dom';
 
 interface LoginViewProps {
   onLogin: () => void;
@@ -23,8 +24,8 @@ export function LoginView({ onLogin }: LoginViewProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-200 dark:bg-slate-950 transition-colors duration-700">
-      <div className="absolute top-8 right-8 flex gap-4">
+    <div className="min-h-screen flex items-center justify-center px-4 py-8 sm:p-6 bg-slate-200 dark:bg-slate-950 transition-colors duration-700">
+      <div className="absolute top-4 right-4 sm:top-8 sm:right-8 flex gap-4">
         <ThemeToggle />
       </div>
 
@@ -34,6 +35,16 @@ export function LoginView({ onLogin }: LoginViewProps) {
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="w-full max-w-[440px]"
       >
+        <div className="mb-6">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Voltar ao Início
+          </Link>
+        </div>
+
         <div className="text-center mb-10">
           <div className="w-20 h-20 premium-gradient rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-emerald-500/30">
             <Shield className="w-10 h-10 text-white" />
@@ -46,7 +57,7 @@ export function LoginView({ onLogin }: LoginViewProps) {
           </p>
         </div>
 
-        <div className="glass-card p-10 rounded-[2.5rem] bg-white dark:bg-slate-900 shadow-2xl dark:shadow-[0_0_50px_rgba(0,0,0,0.3)] border-slate-100 dark:border-slate-800/50">
+        <div className="glass-card p-6 sm:p-10 rounded-[2.5rem] bg-white dark:bg-slate-900 shadow-2xl dark:shadow-[0_0_50px_rgba(0,0,0,0.3)] border-slate-100 dark:border-slate-800/50">
           <form onSubmit={handleSubmit} className="space-y-7">
             <div className="space-y-2.5">
               <label className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1 uppercase tracking-wider">Acesso Institucional</label>

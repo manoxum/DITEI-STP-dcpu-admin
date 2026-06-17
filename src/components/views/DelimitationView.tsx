@@ -28,8 +28,7 @@ import {
   Plus,
   RefreshCw,
   Eye,
-  CheckSquare,
-  Sparkles
+  CheckSquare
 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
@@ -650,8 +649,8 @@ export function DelimitationView() {
               <h1 className="text-4xl font-display font-black tracking-tighter">Revisão e Delimitação</h1>
               <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Inspeção topográfica estruturada e vetorização SIG das parcelas em STP.</p>
             </div>
-            <div className="flex gap-3">
-              <div className="relative group min-w-[300px]">
+            <div className="flex w-full md:w-auto gap-3">
+              <div className="relative group flex-1 md:w-[320px] md:flex-none">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input 
                   type="text" 
@@ -661,7 +660,7 @@ export function DelimitationView() {
                   className="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all font-medium"
                 />
               </div>
-              <button className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 transition-all">
+              <button className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 transition-all shrink-0">
                 <Filter className="w-5 h-5 text-slate-500" />
               </button>
             </div>
@@ -728,20 +727,20 @@ export function DelimitationView() {
               >
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Listas Cadastrais
               </button>
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-[1.25rem] bg-emerald-500/10 flex items-center justify-center">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-[1.25rem] bg-emerald-500/10 flex items-center justify-center shrink-0">
                    <MapIcon className="w-7 h-7 text-emerald-500" />
                 </div>
-                <div>
-                  <div className="flex items-center gap-3 mb-1">
-                    <h1 className="text-3xl font-display font-black tracking-tight leading-none">{currentProcess?.id}</h1>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-1">
+                    <h1 className="text-2xl sm:text-3xl font-display font-black tracking-tight leading-none break-all">{currentProcess?.id}</h1>
                     <span className="px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 leading-none">Modo Vetorização Ativo</span>
                   </div>
                   <p className="text-slate-500 dark:text-slate-400 font-medium">Inspetor Responsável: <strong>Bernardo Cruz (Topógrafo)</strong></p>
                 </div>
               </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex w-full xl:w-auto flex-col sm:flex-row gap-3">
               <button 
                 onClick={handleSaveDraft}
                 className="px-6 py-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors flex items-center gap-2 shadow-sm"
@@ -765,7 +764,7 @@ export function DelimitationView() {
               {/* INTERACTIVE WORKSTATION CANVAS */}
               <div 
                 className={cn(
-                  "rounded-[3rem] h-[600px] overflow-hidden relative border shadow-2xl transition-all duration-500 bg-slate-900 border-slate-800",
+                  "rounded-[2rem] sm:rounded-[3rem] h-[420px] sm:h-[520px] lg:h-[600px] overflow-hidden relative border shadow-2xl transition-all duration-500 bg-slate-900 border-slate-800",
                   activeTool === 'draw' ? "ring-2 ring-emerald-500/40" : "",
                   activeTool === 'ruler' ? "ring-2 ring-blue-500/40" : ""
                 )}
@@ -1111,59 +1110,112 @@ export function DelimitationView() {
                      Selecione a ferramenta de desenho <span className="text-emerald-500 font-bold">"+"</span> no mapa e clique para estabelecer os limites da parcela.
                    </div>
                  ) : (
-                   <div className="overflow-x-auto">
-                     <table className="w-full text-left">
-                       <thead>
-                         <tr className="border-b border-slate-150 dark:border-slate-800/60 pb-4">
-                           <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400 pl-4">ID</th>
-                           <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Ponto X (Pixel)</th>
-                           <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Ponto Y (Pixel)</th>
-                           <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Easting (Mtrs)</th>
-                           <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Northing (Mtrs)</th>
-                           <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400 text-right pr-4">Instruções</th>
-                         </tr>
-                       </thead>
-                       <tbody className="divide-y divide-slate-100 dark:divide-slate-850">
-                         {vertices.map((v) => {
-                           const utm = formatUTM(v.x, v.y);
-                           return (
-                             <tr key={v.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-955/20 transition-colors">
-                               <td className="py-4 pl-4">
-                                 <span className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-black flex items-center justify-center border border-emerald-500/20">{v.id}</span>
-                               </td>
-                               <td className="py-4">
-                                 <input 
-                                   type="number" 
+                   <>
+                     <div className="hidden md:block overflow-x-auto">
+                       <table className="w-full text-left">
+                         <thead>
+                           <tr className="border-b border-slate-150 dark:border-slate-800/60 pb-4">
+                             <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400 pl-4">ID</th>
+                             <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Ponto X (Pixel)</th>
+                             <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Ponto Y (Pixel)</th>
+                             <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Easting (Mtrs)</th>
+                             <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Northing (Mtrs)</th>
+                             <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400 text-right pr-4">Instruções</th>
+                           </tr>
+                         </thead>
+                         <tbody className="divide-y divide-slate-100 dark:divide-slate-850">
+                           {vertices.map((v) => {
+                             const utm = formatUTM(v.x, v.y);
+                             return (
+                               <tr key={v.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-955/20 transition-colors">
+                                 <td className="py-4 pl-4">
+                                   <span className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-black flex items-center justify-center border border-emerald-500/20">{v.id}</span>
+                                 </td>
+                                 <td className="py-4">
+                                   <input 
+                                     type="number" 
+                                     value={v.x}
+                                     onChange={(e) => updateVertexCoord(v.id, 'x', parseInt(e.target.value) || 0)}
+                                     className="w-24 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                   />
+                                 </td>
+                                 <td className="py-4">
+                                   <input 
+                                     type="number" 
+                                     value={v.y}
+                                     onChange={(e) => updateVertexCoord(v.id, 'y', parseInt(e.target.value) || 0)}
+                                     className="w-24 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                   />
+                                 </td>
+                                 <td className="py-4 text-xs font-mono font-bold text-slate-600 dark:text-slate-350">{utm.east}</td>
+                                 <td className="py-4 text-xs font-mono font-bold text-slate-600 dark:text-slate-350">{utm.north}</td>
+                                 <td className="py-4 text-right pr-4">
+                                   <button 
+                                     onClick={() => removeVertex(v.id)}
+                                     className="p-2 hover:bg-red-500/10 rounded-lg text-slate-400 hover:text-red-500 transition-colors"
+                                     title="Excluir Vértice"
+                                   >
+                                     <Trash2 className="w-4.5 h-4.5" />
+                                   </button>
+                                 </td>
+                               </tr>
+                             );
+                           })}
+                         </tbody>
+                       </table>
+                     </div>
+
+                     <div className="grid grid-cols-1 gap-4 md:hidden">
+                       {vertices.map((v) => {
+                         const utm = formatUTM(v.x, v.y);
+                         return (
+                           <div key={v.id} className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/30 p-4">
+                             <div className="flex items-center justify-between gap-3">
+                               <span className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-black flex items-center justify-center border border-emerald-500/20">
+                                 {v.id}
+                               </span>
+                               <button
+                                 onClick={() => removeVertex(v.id)}
+                                 className="p-2 hover:bg-red-500/10 rounded-lg text-slate-400 hover:text-red-500 transition-colors"
+                                 title="Excluir Vértice"
+                               >
+                                 <Trash2 className="w-4.5 h-4.5" />
+                               </button>
+                             </div>
+
+                             <div className="mt-4 grid grid-cols-1 gap-3">
+                               <div>
+                                 <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Ponto X</label>
+                                 <input
+                                   type="number"
                                    value={v.x}
                                    onChange={(e) => updateVertexCoord(v.id, 'x', parseInt(e.target.value) || 0)}
-                                   className="w-24 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                   className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                                  />
-                               </td>
-                               <td className="py-4">
-                                 <input 
-                                   type="number" 
+                               </div>
+                               <div>
+                                 <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Ponto Y</label>
+                                 <input
+                                   type="number"
                                    value={v.y}
                                    onChange={(e) => updateVertexCoord(v.id, 'y', parseInt(e.target.value) || 0)}
-                                   className="w-24 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                   className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                                  />
-                               </td>
-                               <td className="py-4 text-xs font-mono font-bold text-slate-600 dark:text-slate-350">{utm.east}</td>
-                               <td className="py-4 text-xs font-mono font-bold text-slate-600 dark:text-slate-350">{utm.north}</td>
-                               <td className="py-4 text-right pr-4">
-                                 <button 
-                                   onClick={() => removeVertex(v.id)}
-                                   className="p-2 hover:bg-red-500/10 rounded-lg text-slate-400 hover:text-red-500 transition-colors"
-                                   title="Excluir Vértice"
-                                 >
-                                   <Trash2 className="w-4.5 h-4.5" />
-                                 </button>
-                               </td>
-                             </tr>
-                           );
-                         })}
-                       </tbody>
-                     </table>
-                   </div>
+                               </div>
+                               <div className="flex items-center justify-between gap-3">
+                                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Easting</span>
+                                 <span className="text-xs font-mono font-bold text-slate-600 dark:text-slate-350">{utm.east}</span>
+                               </div>
+                               <div className="flex items-center justify-between gap-3">
+                                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Northing</span>
+                                 <span className="text-xs font-mono font-bold text-slate-600 dark:text-slate-350">{utm.north}</span>
+                               </div>
+                             </div>
+                           </div>
+                         );
+                       })}
+                     </div>
+                   </>
                  )}
               </div>
 
@@ -1292,7 +1344,7 @@ export function DelimitationView() {
               <div className="p-8 rounded-[2.5rem] bg-emerald-50 dark:bg-slate-900 border border-emerald-200 dark:border-slate-800 relative overflow-hidden shadow-sm">
                  <div className="relative z-10 space-y-4">
                    <div className="flex items-center gap-3">
-                     <Sparkles className="text-emerald-600 dark:text-emerald-400 w-5 h-5" />
+                     <CheckSquare className="text-emerald-600 dark:text-emerald-400 w-5 h-5" />
                      <h4 className="font-display font-black text-sm uppercase tracking-wider text-slate-900 dark:text-white">Certificador SIG Criptográfico</h4>
                    </div>
                    <p className="text-slate-500 dark:text-slate-400 text-xs font-medium leading-relaxed">

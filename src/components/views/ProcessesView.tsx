@@ -17,15 +17,15 @@ import {
   CheckCircle,
   ExternalLink,
   ChevronRight,
+  ChevronLeft,
   Clock,
   Trash2,
   CheckSquare,
-  Sparkles,
   Award,
   Check,
   FileSignature
 } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
@@ -143,9 +143,20 @@ const ADVANCED_STAGES = [
 export function ProcessesView() {
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<'board' | 'list'>('board');
+  const [isMobile, setIsMobile] = useState(false);
+  const [isBoardDragging, setIsBoardDragging] = useState(false);
+  const [canScrollBoardLeft, setCanScrollBoardLeft] = useState(false);
+  const [canScrollBoardRight, setCanScrollBoardRight] = useState(false);
   const [workflowMode, setWorkflowMode] = useState<'traditional' | 'international'>('international');
   const [drawerTab, setDrawerTab] = useState<'dossier' | 'title'>('dossier');
   const [searchQuery, setSearchQuery] = useState('');
+  const boardScrollRef = useRef<HTMLDivElement | null>(null);
+  const boardDragStateRef = useRef({
+    isDragging: false,
+    startX: 0,
+    startScrollLeft: 0,
+    moved: false,
+  });
 
   // active selected process for drawer
   const [selectedProcess, setSelectedProcess] = useState<any | null>(null);
@@ -154,7 +165,24 @@ export function ProcessesView() {
   useEffect(() => {
     setDrawerTab('dossier');
   }, [selectedProcess]);
-  
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile && viewMode !== 'list') {
+      setViewMode('list');
+    }
+  }, [isMobile, viewMode]);
+
   // Persistent processes list state
   const [processes, setProcesses] = useState<any[]>(() => {
     const cached = localStorage.getItem('STP_PROCESSES');
@@ -212,6 +240,30 @@ export function ProcessesView() {
     );
   });
 
+  useEffect(() => {
+    const boardNode = boardScrollRef.current;
+    if (!boardNode || viewMode !== 'board') {
+      setCanScrollBoardLeft(false);
+      setCanScrollBoardRight(false);
+      return;
+    }
+
+    const updateBoardScrollState = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = boardNode;
+      setCanScrollBoardLeft(scrollLeft > 8);
+      setCanScrollBoardRight(scrollLeft + clientWidth < scrollWidth - 8);
+    };
+
+    updateBoardScrollState();
+    boardNode.addEventListener('scroll', updateBoardScrollState, { passive: true });
+    window.addEventListener('resize', updateBoardScrollState);
+
+    return () => {
+      boardNode.removeEventListener('scroll', updateBoardScrollState);
+      window.removeEventListener('resize', updateBoardScrollState);
+    };
+  }, [viewMode, workflowMode, filteredProcesses.length]);
+
   // Handle status update of selected process
   const updateProcessStatus = (procId: string, newStatus: string) => {
     setProcesses(prev => 
@@ -245,6 +297,70 @@ export function ProcessesView() {
     );
     const stageName = ADVANCED_STAGES.find(s => s.id === nextStep)?.label || 'Etapa';
     showToast(`Dossier promovido para: ${stageName}!`, 'success');
+  };
+
+  const scrollBoardByViewport = (direction: 'left' | 'right') => {
+    const boardNode = boardScrollRef.current;
+    if (!boardNode) return;
+
+    const amount = Math.max(boardNode.clientWidth * 0.72, 280);
+    boardNode.scrollBy({
+      left: direction === 'right' ? amount : -amount,
+      behavior: 'smooth',
+    });
+  };
+
+  const handleBoardPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (isMobile || event.button !== 0) return;
+
+    const boardNode = boardScrollRef.current;
+    if (!boardNode) return;
+
+    boardDragStateRef.current = {
+      isDragging: true,
+      startX: event.clientX,
+      startScrollLeft: boardNode.scrollLeft,
+      moved: false,
+    };
+
+    setIsBoardDragging(true);
+    boardNode.setPointerCapture(event.pointerId);
+  };
+
+  const handleBoardPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const boardNode = boardScrollRef.current;
+    const dragState = boardDragStateRef.current;
+    if (!boardNode || !dragState.isDragging) return;
+
+    const deltaX = event.clientX - dragState.startX;
+    if (Math.abs(deltaX) > 6) {
+      dragState.moved = true;
+    }
+
+    boardNode.scrollLeft = dragState.startScrollLeft - deltaX;
+  };
+
+  const handleBoardPointerEnd = (event: React.PointerEvent<HTMLDivElement>) => {
+    const boardNode = boardScrollRef.current;
+    const dragState = boardDragStateRef.current;
+    if (!boardNode || !dragState.isDragging) return;
+
+    dragState.isDragging = false;
+    setIsBoardDragging(false);
+
+    if (boardNode.hasPointerCapture(event.pointerId)) {
+      boardNode.releasePointerCapture(event.pointerId);
+    }
+
+    window.setTimeout(() => {
+      boardDragStateRef.current.moved = false;
+    }, 0);
+  };
+
+  const handleBoardClickCapture = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!boardDragStateRef.current.moved) return;
+    event.preventDefault();
+    event.stopPropagation();
   };
 
   // Toggle dynamic checklist item state
@@ -401,12 +517,12 @@ export function ProcessesView() {
                   : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-350"
               )}
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              <FileSignature className="w-3.5 h-3.5" />
               e-Gov Avançado (6 Passos)
             </button>
           </div>
 
-          <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+          <div className={cn("bg-slate-100 dark:bg-slate-800 p-1 rounded-xl", isMobile ? "hidden" : "flex")}>
             <button 
               onClick={() => setViewMode('board')}
               title="Visualização em Quadro Kanban"
@@ -463,15 +579,81 @@ export function ProcessesView() {
       </div>
 
       {/* RENDER VIEW SCHEME */}
-      <div className="overflow-x-auto pb-4">
+      <div className="relative pb-4">
         {viewMode === 'board' ? (
           /* KANBAN BOARD VIEW */
-          <div className="flex gap-6 min-w-[1000px] mt-4 overflow-x-auto">
+          <>
+            <AnimatePresence>
+              {canScrollBoardLeft && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="pointer-events-none absolute inset-y-4 left-0 z-10 hidden lg:block w-24 bg-gradient-to-r from-slate-200 via-slate-200/85 to-transparent dark:from-slate-950 dark:via-slate-950/80"
+                />
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+              {canScrollBoardRight && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="pointer-events-none absolute inset-y-4 right-0 z-10 hidden lg:block w-24 bg-gradient-to-l from-slate-200 via-slate-200/85 to-transparent dark:from-slate-950 dark:via-slate-950/80"
+                />
+              )}
+            </AnimatePresence>
+
+            <div className="absolute right-0 -top-2 hidden lg:flex items-center gap-2 z-20">
+              <button
+                type="button"
+                onClick={() => scrollBoardByViewport('left')}
+                disabled={!canScrollBoardLeft}
+                className="w-10 h-10 rounded-full border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm shadow-sm flex items-center justify-center text-slate-500 disabled:opacity-35 disabled:cursor-not-allowed hover:text-slate-900 dark:hover:text-white transition-colors"
+                title="Ver colunas anteriores"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollBoardByViewport('right')}
+                disabled={!canScrollBoardRight}
+                className="w-10 h-10 rounded-full border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm shadow-sm flex items-center justify-center text-slate-500 disabled:opacity-35 disabled:cursor-not-allowed hover:text-slate-900 dark:hover:text-white transition-colors"
+                title="Ver próximas colunas"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="mb-3 flex items-center justify-between lg:hidden">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                Deslize horizontalmente para ver mais colunas
+              </p>
+              <div className="flex items-center gap-1.5">
+                <span className={cn("h-1.5 w-1.5 rounded-full transition-colors", canScrollBoardLeft ? "bg-emerald-500" : "bg-slate-300 dark:bg-slate-700")} />
+                <span className={cn("h-1.5 w-1.5 rounded-full transition-colors", canScrollBoardRight ? "bg-emerald-500" : "bg-slate-300 dark:bg-slate-700")} />
+              </div>
+            </div>
+
+            <div
+              ref={boardScrollRef}
+              onPointerDown={handleBoardPointerDown}
+              onPointerMove={handleBoardPointerMove}
+              onPointerUp={handleBoardPointerEnd}
+              onPointerLeave={handleBoardPointerEnd}
+              onPointerCancel={handleBoardPointerEnd}
+              onClickCapture={handleBoardClickCapture}
+              className={cn(
+                "flex gap-6 min-w-[1000px] mt-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pr-6 select-none",
+                isMobile ? "cursor-auto" : isBoardDragging ? "cursor-grabbing" : "cursor-grab"
+              )}
+            >
             {workflowMode === 'traditional' ? (
               COLUMNS.map(column => {
                 const colProcesses = filteredProcesses.filter(p => p.status === column.id);
                 return (
-                  <div key={column.id} className="flex-1 min-w-[250px] space-y-4">
+                  <div key={column.id} className="flex-1 min-w-[250px] space-y-4 snap-start">
                     
                     {/* Column Title Banner */}
                     <div className="flex items-center justify-between px-3 pb-1 border-b border-slate-100 dark:border-slate-800/10">
@@ -513,7 +695,7 @@ export function ProcessesView() {
               ADVANCED_STAGES.map(stage => {
                 const colProcesses = filteredProcesses.filter(p => (p.step || 1) === stage.id);
                 return (
-                  <div key={stage.id} className="flex-1 min-w-[260px] space-y-4">
+                  <div key={stage.id} className="flex-1 min-w-[260px] space-y-4 snap-start">
                     
                     {/* Column Title Banner */}
                     <div className="flex items-center justify-between px-3 pb-1 border-b border-slate-100 dark:border-slate-800/10">
@@ -556,7 +738,8 @@ export function ProcessesView() {
                 );
               })
             )}
-          </div>
+            </div>
+          </>
         ) : (
           /* TABULAR DETAILED LIST VIEW */
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-3xl overflow-hidden shadow-sm mt-4">
@@ -865,7 +1048,7 @@ export function ProcessesView() {
                 <div className="space-y-4 bg-slate-50/50 dark:bg-slate-950/20 p-6 rounded-2xl border border-slate-150/50 dark:border-slate-800/50">
                   <div className="flex items-center justify-between pb-2 border-b border-slate-200/50 dark:border-slate-800/50">
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
+                      <FileSignature className="w-3.5 h-3.5 text-emerald-500" />
                       Ciclo e-Gov Internacional (Suíça/Estónia)
                     </span>
                     <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full">
@@ -1299,7 +1482,7 @@ export function ProcessesView() {
                         {activeSelected.status === 'in_review' && (
                           <div className="bg-blue-500/5 border border-blue-500/20 p-4.5 rounded-2xl space-y-1.5">
                             <h4 className="text-xs font-black text-blue-800 dark:text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
-                              <Sparkles className="w-3.5 h-3.5" />
+                              <CheckSquare className="w-3.5 h-3.5" />
                               Fase de Revisão de Cadastro e Delimitação
                             </h4>
                             <p className="text-[11px] text-blue-900/80 dark:text-blue-400/85 font-medium leading-relaxed">

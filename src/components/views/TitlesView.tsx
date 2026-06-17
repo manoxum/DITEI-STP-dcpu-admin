@@ -24,7 +24,6 @@ import {
   Calendar,
   ExternalLink,
   PlusSquare,
-  Sparkles,
   UserCheck
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -339,7 +338,7 @@ export function TitlesView() {
           <h1 className="text-4xl font-display font-black tracking-tighter">Análise e Emissão de Títulos</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Controlo oficial de titularidade, registro predial e legalidade cadastral das concessões.</p>
         </div>
-        <div className="flex gap-3 shrink-0">
+        <div className="flex w-full md:w-auto flex-col sm:flex-row gap-3 shrink-0">
           <button className="flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-bold text-xs uppercase tracking-wider hover:bg-slate-50 dark:hover:bg-slate-950 transition-all">
             <Download className="w-4 h-4" /> Exportar Lista
           </button>
@@ -362,7 +361,7 @@ export function TitlesView() {
       {/* FULL-SCREEN DIGITAL PRODUCTION WIZARD MODAL */}
       <AnimatePresence>
         {showIssueModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-12">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-12">
             <motion.div 
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
@@ -375,10 +374,10 @@ export function TitlesView() {
               initial={{ opacity: 0, scale: 0.95, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 30 }}
-              className="relative bg-white dark:bg-slate-900 rounded-[2.5rem] w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-[85vh] max-h-[750px] border border-slate-150 dark:border-slate-800"
+              className="relative bg-white dark:bg-slate-900 rounded-[2rem] sm:rounded-[2.5rem] w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-[92vh] md:h-[85vh] max-h-[820px] border border-slate-150 dark:border-slate-800"
             >
               {/* Left Steps progress sidebar - styled professionally */}
-              <div className="w-full md:w-80 bg-slate-50 dark:bg-slate-950 p-8 border-r border-slate-150 dark:border-slate-805 flex flex-col justify-between">
+              <div className="w-full md:w-80 bg-slate-50 dark:bg-slate-950 p-5 sm:p-8 border-b md:border-b-0 md:border-r border-slate-150 dark:border-slate-805 flex flex-col justify-between">
                 <div className="space-y-8">
                   <div className="flex items-center gap-3">
                     <div className="w-11 h-11 rounded-2xl premium-gradient flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
@@ -428,7 +427,7 @@ export function TitlesView() {
 
               {/* Main wizard responsive content columns */}
               <div className="flex-1 flex flex-col bg-white dark:bg-slate-900 justify-between overflow-y-auto">
-                <div className="p-8 md:p-12 space-y-6">
+                <div className="p-5 sm:p-8 md:p-12 space-y-6">
                   
                   {/* STEP 1: Link verified process */}
                   {issueStep === 1 && (
@@ -608,7 +607,7 @@ export function TitlesView() {
                 </div>
 
                 {/* Footer buttons row */}
-                <div className="p-8 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-950/20">
+                <div className="p-5 sm:p-8 border-t border-slate-100 dark:border-slate-800 flex flex-wrap justify-between items-center gap-4 bg-slate-50/50 dark:bg-slate-950/20">
                   {issueStep < 4 ? (
                     <>
                       <button 
@@ -715,7 +714,7 @@ export function TitlesView() {
                   className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-150 dark:border-slate-800 rounded-xl text-xs font-bold focus:outline-none focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500/50 transition-all font-semibold text-slate-800 dark:text-white"
                 />
               </div>
-              <div className="flex gap-1.5 p-1.5 bg-slate-100 dark:bg-slate-950 border border-slate-105 dark:border-slate-850 rounded-2xl">
+              <div className="flex flex-wrap gap-1.5 p-1.5 bg-slate-100 dark:bg-slate-950 border border-slate-105 dark:border-slate-850 rounded-2xl">
                 {[
                   { id: 'all', label: 'Todos' },
                   { id: 'issued', label: 'Emitidos' },
@@ -739,8 +738,8 @@ export function TitlesView() {
               </div>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full min-w-[760px] text-left">
                 <thead>
                   <tr className="border-b border-slate-100 dark:border-slate-800 text-slate-400">
                     <th className="pb-4.5 pl-6 text-[10px] font-black uppercase tracking-[0.2em]">Referência</th>
@@ -812,6 +811,69 @@ export function TitlesView() {
                   )}
                 </tbody>
               </table>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:hidden">
+              {filteredTitles.map((title: any) => (
+                <div
+                  key={title.id}
+                  onClick={() => navigate(`/titles/${title.id}`)}
+                  className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/30 p-5 cursor-pointer transition-colors hover:bg-slate-50 dark:hover:bg-slate-950/40"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
+                        <Hash className="w-4 h-4 text-slate-400" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-black tracking-tight text-slate-900 dark:text-white leading-tight">{title.id}</p>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase mt-0.5 tracking-wider">{title.area} • {title.parcel?.id || 'REC-00'}</p>
+                      </div>
+                    </div>
+                    <div className={cn(
+                      "flex items-center justify-center gap-1 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shrink-0",
+                      title.status === 'issued' ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/10" :
+                      title.status === 'pending' ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/10" :
+                      title.status === 'review' ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/10" :
+                      "bg-rose-500/10 text-rose-600 dark:text-rose-450 border border-rose-500/10"
+                    )}>
+                      {title.status === 'issued' ? <CheckCircle2 className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
+                      {title.status === 'issued' ? 'Emitido' : title.status === 'pending' ? 'Pendente' : title.status === 'review' ? 'Revisão' : 'Revogado'}
+                    </div>
+                  </div>
+
+                  <div className="mt-4 space-y-3">
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Titular</p>
+                      <p className="text-sm font-bold text-slate-900 dark:text-white leading-tight">{title.utente.name}</p>
+                      <p className="text-[10px] font-bold text-slate-400 mt-0.5 uppercase">Registo: {title.date}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Localização</p>
+                      <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                        <MapPin className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+                        <span className="text-xs font-semibold">{title.location}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); navigate(`/titles/${title.id}`); }}
+                      className="p-2 hover:bg-emerald-500/10 rounded-xl transition-colors text-slate-400 hover:text-emerald-500"
+                      title="Abrir Instrumento Requerido"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              {filteredTitles.length === 0 && (
+                <div className="py-12 text-center opacity-50">
+                  <span className="text-xs font-black uppercase tracking-widest text-slate-400">Nenhum registro correspondente</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

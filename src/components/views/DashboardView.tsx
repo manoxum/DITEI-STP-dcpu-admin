@@ -43,7 +43,7 @@ export function DashboardView() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="text-4xl font-display font-black tracking-tighter">Dashboard Overview</h1>
+        <h1 className="text-3xl sm:text-4xl font-display font-black tracking-tighter">Dashboard Overview</h1>
         <p className="text-slate-500 dark:text-slate-400 mt-1.5 font-medium">Bem-vindo ao centro estratégico da Direção dos Serviços Geográficos e Cadastrais.</p>
       </div>
 
@@ -84,13 +84,13 @@ export function DashboardView() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[2.5rem] shadow-sm">
-          <div className="flex items-center justify-between mb-10">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-8 rounded-[2.5rem] shadow-sm">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 sm:mb-10">
             <div>
               <h3 className="font-display font-black text-xl tracking-tight">Atividade Institucional</h3>
               <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">Comparativo de Eficiência Semestral</p>
             </div>
-            <div className="flex gap-6">
+            <div className="flex flex-wrap gap-4 sm:gap-6">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Processos</span>
@@ -101,7 +101,7 @@ export function DashboardView() {
               </div>
             </div>
           </div>
-          <div className="h-[380px] w-full">
+          <div className="h-[300px] sm:h-[380px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data}>
                 <defs>
@@ -161,7 +161,7 @@ export function DashboardView() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[2.5rem] shadow-sm">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-8 rounded-[2.5rem] shadow-sm">
           <h3 className="font-display font-black text-xl tracking-tight mb-8">Fluxo de Sistema</h3>
           <div className="space-y-7">
             {[1, 2, 3, 4, 5].map((_, i) => (

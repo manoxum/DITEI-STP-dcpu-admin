@@ -66,7 +66,7 @@ export function OwnersView() {
       </div>
 
       <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
@@ -141,6 +141,75 @@ export function OwnersView() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 p-4 md:hidden">
+          {filteredOwners.map((owner) => (
+            <div
+              key={owner.id}
+              onClick={() => navigate(`/owners/${owner.id}`)}
+              className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/30 p-5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-900/40 cursor-pointer"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 shrink-0">
+                    <User className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-bold text-sm leading-none mb-1 truncate">{owner.name}</p>
+                    <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest">{owner.id}</p>
+                  </div>
+                </div>
+                <div className={cn(
+                  "inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest shrink-0",
+                  owner.status === 'Verificado' ? "text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10" :
+                  owner.status === 'Pendente' ? "text-amber-600 bg-amber-50 dark:bg-amber-500/10" : "text-rose-600 bg-rose-50 dark:bg-rose-500/10"
+                )}>
+                  <div className={cn(
+                    "w-1.5 h-1.5 rounded-full",
+                    owner.status === 'Verificado' ? "bg-emerald-500" :
+                    owner.status === 'Pendente' ? "bg-amber-500" : "bg-rose-500"
+                  )} />
+                  {owner.status}
+                </div>
+              </div>
+
+              <div className="mt-4 space-y-3 text-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">NIF</span>
+                  <span className="font-mono text-slate-500 text-xs">{owner.nif}</span>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Tipo</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    {owner.type}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Património</span>
+                  <div className="flex items-center gap-1.5 font-bold text-sm">
+                    <Briefcase className="w-3.5 h-3.5 text-slate-400" />
+                    {owner.assets} {owner.assets === 1 ? 'Propriedade' : 'Propriedades'}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2">
+                <button
+                  onClick={(e) => { e.stopPropagation(); navigate(`/owners/${owner.id}`); }}
+                  className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg text-blue-600 transition-colors"
+                >
+                  <Eye className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400"
+                >
+                  <MoreVertical className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
