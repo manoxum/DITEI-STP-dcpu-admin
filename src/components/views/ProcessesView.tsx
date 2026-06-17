@@ -552,7 +552,6 @@ export function ProcessesView() {
                         ))
                       )}
                     </div>
-
                   </div>
                 );
               })
@@ -561,101 +560,191 @@ export function ProcessesView() {
         ) : (
           /* TABULAR DETAILED LIST VIEW */
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-3xl overflow-hidden shadow-sm mt-4">
-            <table className="w-full text-left border-collapse">
-              <thead className="bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-slate-850">
-                <tr>
-                  <th className="pl-8 pr-4 py-4.5 font-bold text-xs uppercase tracking-wider text-slate-400">ID Processo</th>
-                  <th className="px-6 py-4.5 font-bold text-xs uppercase tracking-wider text-slate-400">Requerente</th>
-                  <th className="px-6 py-4.5 font-bold text-xs uppercase tracking-wider text-slate-400">Tipo de Pedido</th>
-                  <th className="px-6 py-4.5 font-bold text-xs uppercase tracking-wider text-slate-400">Localização</th>
-                  <th className="px-6 py-4.5 font-bold text-xs uppercase tracking-wider text-slate-400">Estado</th>
-                  <th className="px-6 py-4.5 font-bold text-xs uppercase tracking-wider text-slate-400">Data</th>
-                  <th className="pr-8 pl-4 py-4.5 text-right font-bold text-xs uppercase tracking-wider text-slate-400">Ações</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {filteredProcesses.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="py-20 text-center">
-                      <div className="max-w-xs mx-auto space-y-2 opacity-50">
-                        <X className="w-10 h-10 text-rose-500 mx-auto" />
-                        <p className="font-display font-black text-lg">Nenhum processo localizado</p>
-                        <p className="text-xs text-slate-400 font-medium">Altere os termos da busca para obter resultados.</p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  filteredProcesses.map((process, i) => (
-                    <tr 
-                      key={process.id} 
-                      onClick={() => setSelectedProcess(process)}
-                      className="hover:bg-slate-50/80 dark:hover:bg-slate-950/60 transition-all cursor-pointer group"
-                    >
-                      <td className="pl-8 pr-4 py-5.5">
-                        <div className="flex items-center gap-2.5">
-                          <span className="font-mono font-black text-sm text-slate-900 dark:text-white">{process.id}</span>
-                          {process.urgent && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-5.5">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                            <User className="w-4 h-4 text-emerald-500" />
-                          </div>
-                          <div>
-                            <span className="font-bold text-sm block tracking-tight text-slate-800 dark:text-slate-100">{process.applicant}</span>
-                            <span className="text-[10px] font-semibold text-slate-450 block truncate max-w-[140px] opacity-70">NIF {process.nif}</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-5.5 text-slate-500 dark:text-slate-400">
-                        <span className="text-xs font-black uppercase tracking-wider px-2.5 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-700 dark:text-slate-300">
-                          {process.type}
-                        </span>
-                      </td>
-                      <td className="px-6 py-5.5 text-slate-500 dark:text-slate-400">
-                        <div className="flex items-center gap-1.5 text-xs font-semibold">
-                          <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                          <span>{process.location}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-5.5">
-                        {workflowMode === 'international' ? (
-                          <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-bold font-mono bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded border border-emerald-500/10 shrink-0">
-                              Etapa {process.step || 1} de 6
-                            </span>
-                            <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate max-w-[150px]" title={ADVANCED_STAGES.find(s => s.id === (process.step || 1))?.label}>
-                              {ADVANCED_STAGES.find(s => s.id === (process.step || 1))?.label.split('. ')[1]}
-                            </span>
-                          </div>
-                        ) : (
-                          <StatusBadge status={process.status} />
-                        )}
-                      </td>
-                      <td className="px-6 py-5.5 text-xs font-bold font-mono text-slate-400">{process.date}</td>
-                      <td className="pr-8 pl-4 py-5.5 text-right">
-                         <button 
-                           onClick={(e) => {
-                             e.stopPropagation();
-                             setSelectedProcess(process);
-                           }}
-                           className="p-2 py-1 bg-slate-105 hover:bg-slate-100 dark:hover:bg-slate-850 rounded-lg transition-all text-xs font-black uppercase tracking-wider text-emerald-500 flex items-center gap-1.5 ml-auto border border-emerald-500/10"
-                         >
-                           Ver Detalhes
-                           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                         </button>
-                      </td>
+              {/* DESKTOP TABLE VIEW */}
+              <div className="hidden lg:block overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead className="bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-slate-850">
+                    <tr>
+                      <th className="pl-8 pr-4 py-4.5 font-bold text-xs uppercase tracking-wider text-slate-400">ID Processo</th>
+                      <th className="px-6 py-4.5 font-bold text-xs uppercase tracking-wider text-slate-400">Requerente</th>
+                      <th className="px-6 py-4.5 font-bold text-xs uppercase tracking-wider text-slate-400">Tipo de Pedido</th>
+                      <th className="px-6 py-4.5 font-bold text-xs uppercase tracking-wider text-slate-400">Localização</th>
+                      <th className="px-6 py-4.5 font-bold text-xs uppercase tracking-wider text-slate-400">Estado</th>
+                      <th className="px-6 py-4.5 font-bold text-xs uppercase tracking-wider text-slate-400">Data</th>
+                      <th className="pr-8 pl-4 py-4.5 text-right font-bold text-xs uppercase tracking-wider text-slate-400">Ações</th>
                     </tr>
-                  ))
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {filteredProcesses.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="py-20 text-center">
+                          <div className="max-w-xs mx-auto space-y-2 opacity-50">
+                            <X className="w-10 h-10 text-rose-500 mx-auto" />
+                            <p className="font-display font-black text-lg">Nenhum processo localizado</p>
+                            <p className="text-xs text-slate-400 font-medium">Altere os termos da busca para obter resultados.</p>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredProcesses.map((process, i) => (
+                        <tr 
+                          key={process.id} 
+                          onClick={() => setSelectedProcess(process)}
+                          className="hover:bg-slate-50/80 dark:hover:bg-slate-950/60 transition-all cursor-pointer group"
+                        >
+                          <td className="pl-8 pr-4 py-5.5">
+                            <div className="flex items-center gap-2.5">
+                              <span className="font-mono font-black text-sm text-slate-900 dark:text-white">{process.id}</span>
+                              {process.urgent && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-6 py-5.5">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+                                <User className="w-4 h-4 text-emerald-500" />
+                              </div>
+                              <div>
+                                <span className="font-bold text-sm block tracking-tight text-slate-800 dark:text-slate-100">{process.applicant}</span>
+                                <span className="text-[10px] font-semibold text-slate-450 block truncate max-w-[140px] opacity-70">NIF {process.nif}</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-5.5 text-slate-500 dark:text-slate-400">
+                            <span className="text-xs font-black uppercase tracking-wider px-2.5 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-700 dark:text-slate-300">
+                              {process.type}
+                            </span>
+                          </td>
+                          <td className="px-6 py-5.5 text-slate-500 dark:text-slate-400">
+                            <div className="flex items-center gap-1.5 text-xs font-semibold">
+                              <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span>{process.location}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-5.5">
+                            {workflowMode === 'international' ? (
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-bold font-mono bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 px-2 py-1 rounded border border-emerald-500/10 shrink-0">
+                                  Etapa {process.step || 1} de 6
+                                </span>
+                                <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate max-w-[150px]" title={ADVANCED_STAGES.find(s => s.id === (process.step || 1))?.label}>
+                                  {ADVANCED_STAGES.find(s => s.id === (process.step || 1))?.label.split('. ')[1]}
+                                </span>
+                              </div>
+                            ) : (
+                              <StatusBadge status={process.status} />
+                            )}
+                          </td>
+                          <td className="px-6 py-5.5 text-xs font-bold font-mono text-slate-400">{process.date}</td>
+                          <td className="pr-8 pl-4 py-5.5 text-right">
+                             <button 
+                               onClick={(e) => {
+                                 e.stopPropagation();
+                                 setSelectedProcess(process);
+                               }}
+                               className="p-2 py-1 bg-slate-105 hover:bg-slate-100 dark:hover:bg-slate-850 rounded-lg transition-all text-xs font-black uppercase tracking-wider text-emerald-500 flex items-center gap-1.5 ml-auto border border-emerald-500/10"
+                             >
+                               Ver Detalhes
+                               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                             </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* MOBILE RESPONSIVE CARDS VIEW */}
+              <div className="block lg:hidden p-4">
+                {filteredProcesses.length === 0 ? (
+                  <div className="py-12 text-center">
+                    <div className="max-w-xs mx-auto space-y-2 opacity-50">
+                      <X className="w-10 h-10 text-rose-500 mx-auto" />
+                      <p className="font-display font-black text-lg text-slate-800 dark:text-slate-200">Nenhum processo localizado</p>
+                      <p className="text-xs text-slate-400 font-medium">Altere os termos da busca para obter resultados.</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {filteredProcesses.map((process, i) => (
+                      <div 
+                        key={process.id}
+                        onClick={() => setSelectedProcess(process)}
+                        className="bg-slate-50/50 dark:bg-slate-950/25 hover:bg-slate-50 dark:hover:bg-slate-950/40 p-5 rounded-2xl border border-slate-100/80 dark:border-slate-850 shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-4 group"
+                      >
+                        <div>
+                          <div className="flex items-start justify-between mb-3">
+                            <span className="font-mono font-black text-sm text-emerald-600 dark:text-emerald-400 bg-emerald-500/5 px-2.5 py-1 rounded-lg">
+                              {process.id}
+                            </span>
+                            <div className="flex items-center gap-2">
+                              {process.urgent && (
+                                <span className="text-[10px] font-black text-white bg-rose-500 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                  Urgente
+                                </span>
+                              )}
+                              <span className="text-[10px] font-bold font-mono text-slate-400 dark:text-slate-500">{process.date}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+                              <User className="w-4.5 h-4.5 text-emerald-500" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="font-bold text-sm tracking-tight text-slate-800 dark:text-slate-100 truncate">{process.applicant}</p>
+                              <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500">NIF {process.nif}</p>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-slate-700 dark:text-slate-300">
+                              {process.type}
+                            </span>
+                            <div className="flex items-center gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                              <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span className="truncate max-w-[170px]">{process.location}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="pt-3 border-t border-slate-100 dark:border-slate-850/80 flex items-center justify-between gap-2.5 mt-1">
+                          <div className="min-w-0 flex-1">
+                            {workflowMode === 'international' ? (
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-[9px] font-bold font-mono bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/15 shrink-0">
+                                  Fase {process.step || 1}/6
+                                </span>
+                                <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300 truncate" title={ADVANCED_STAGES.find(s => s.id === (process.step || 1))?.label}>
+                                  {ADVANCED_STAGES.find(s => s.id === (process.step || 1))?.label.split('. ')[1]}
+                                </span>
+                              </div>
+                            ) : (
+                              <StatusBadge status={process.status} />
+                            )}
+                          </div>
+
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedProcess(process);
+                            }}
+                            className="p-1 px-3 bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-850 hover:border-emerald-500/30 rounded-lg transition-all text-[11px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1 ml-auto border border-emerald-500/10 shrink-0"
+                          >
+                            Ver
+                            <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 )}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+              </div>
+            </div>
+          )}
+        </div>
 
       {/* DYNAMIC PROCESS SLIDEOUT DRAWER / MODAL DETAILS */}
       <AnimatePresence>
