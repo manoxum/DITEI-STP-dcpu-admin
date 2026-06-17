@@ -22,6 +22,8 @@ import { StaffView } from './components/views/StaffView';
 import { ReportsView } from './components/views/SimpleViews';
 import { AdminSection } from './types';
 
+import { ValidateTitleView } from './components/views/ValidateTitleView';
+
 export default function App() {
   return (
     <ThemeProvider>
@@ -54,6 +56,15 @@ function AppContent() {
   // Public route: Landing Page
   if (location.pathname === '/' && !isLoggedIn) {
     return <LandingView />;
+  }
+
+  // Public route: Validate Title
+  if (location.pathname.startsWith('/validate/')) {
+    return (
+      <Routes>
+        <Route path="/validate/:id" element={<ValidateTitleView />} />
+      </Routes>
+    );
   }
 
   if (location.pathname === '/login') {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
+import QRCode from 'react-qr-code';
 import { 
   ArrowLeft, 
   Download, 
@@ -191,6 +192,12 @@ export function TitleDetailsView() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [pinValue, setPinValue] = useState('');
+  const [pinError, setPinError] = useState(false);
+  const [isSigning, setIsSigning] = useState(false);
+
   // Load unified database from localStorage or fallback
   const [db, setDb] = useState<Record<string, any>>(() => {
     const cached = localStorage.getItem('STP_TITLES_DB');
@@ -204,6 +211,26 @@ export function TitleDetailsView() {
 
   const currentId = id && db[id] ? id : 'TIT-STP-2026-001';
   const data = db[currentId];
+  
+  // URL for validation QR Code
+  const validateUrl = `${window.location.origin}/validate/${currentId}`;
+
+  const handleSignSubmit = () => {
+    if (pinValue === '1234') { // Mock PIN
+      setIsSigning(true);
+      setPinError(false);
+      setTimeout(() => {
+        handleTransitionState('issued', 'Assinatura Eletrónica Concedida', 'O título foi validado e assinado digitalmente por autoridade delegada. Passagem para estado Ativo.');
+        setIsSigning(false);
+        setShowPinModal(false);
+        setPinValue('');
+        setShowSuccessModal(true);
+      }, 1500);
+    } else {
+      setPinError(true);
+      setPinValue('');
+    }
+  };
 
   // Handle dynamic local simulations & save to main DB copy
   const handleTransitionState = (newStatus: string, eventName: string, detailText: string) => {
@@ -299,7 +326,7 @@ export function TitleDetailsView() {
               </p>
             </div>
             <button 
-              onClick={() => handleTransitionState('issued', 'Assinatura Eletrónica Concedida', 'O título foi validado e assinado digitalmente por autoridade delegada. Passagem para estado Ativo.')}
+              onClick={() => setShowPinModal(true)}
               className="mt-3 md:mt-0 shrink-0 px-6 py-3 rounded-2xl bg-amber-500 text-white font-bold text-xs uppercase tracking-widest hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2"
             >
               <FileSignature className="w-4 h-4" /> Assinar e Emitir
@@ -536,22 +563,33 @@ export function TitleDetailsView() {
           
           {/* Status Box (Inviolabilidade ou Outras Ações Administrativas) */}
           {data.status === 'issued' ? (
-            <div className="bg-white dark:bg-slate-900 border border-emerald-200 dark:border-slate-700 p-10 rounded-[2.5rem] relative overflow-hidden shadow-sm">
-               <div className="relative z-10">
-                 <div className="w-16 h-16 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-2xl flex items-center justify-center mb-8 border border-emerald-500/20 dark:border-emerald-500/30">
+            <div className="bg-white dark:bg-slate-900 border border-emerald-200 dark:border-slate-700 p-10 rounded-[2.5rem] relative overflow-hidden shadow-sm flex flex-col items-center text-center">
+               <div className="relative z-10 w-full flex flex-col items-center">
+                 <div className="w-16 h-16 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-2xl flex items-center justify-center mb-6 border border-emerald-500/20 dark:border-emerald-500/30">
                    <ShieldCheck className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
                  </div>
                  <h3 className="font-display font-black text-2xl tracking-tight mb-4 text-slate-900 dark:text-white">Certificação Digital Ativa</h3>
-                 <p className="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-10">
+                 <p className="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-8">
                    Este documento possui assinatura eletrónica criptográfica qualificada e está homologado na rede oficial do Estado Santomense.
                  </p>
-                 <div className="flex items-center gap-4 p-4 rounded-2xl bg-emerald-50 dark:bg-white/5 border border-emerald-100 dark:border-white/10">
+                 
+                 <div className="bg-white p-4 rounded-3xl shadow-xl shadow-emerald-500/10 border border-slate-100 dark:border-slate-800 mb-8 w-48 h-48 flex items-center justify-center relative group overflow-hidden">
+                    <QRCode
+                      value={validateUrl}
+                      size={160}
+                      className="opacity-90 transition-opacity group-hover:opacity-100"
+                      viewBox={`0 0 256 256`}
+                    />
+                    <div className="absolute inset-0 bg-emerald-900/0 group-hover:bg-emerald-900/5 transition-colors pointer-events-none rounded-3xl"></div>
+                 </div>
+
+                 <div className="w-full flex items-center justify-center gap-4 p-4 rounded-2xl bg-emerald-50 dark:bg-white/5 border border-emerald-100 dark:border-white/10">
                     <div className="w-10 h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center shrink-0">
                       <Check className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Garantia Legal</p>
-                      <p className="text-xs font-bold text-slate-900 dark:text-white">Documento Permanente</p>
+                    <div className="text-left">
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Documento Válido</p>
+                      <p className="text-xs font-bold text-slate-900 dark:text-white">QR Code Autenticado</p>
                     </div>
                  </div>
                </div>
@@ -659,6 +697,145 @@ export function TitleDetailsView() {
 
         </div>
       </div>
+
+      {/* PIN Verification Modal */}
+      {showPinModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+            onClick={() => !isSigning && setShowPinModal(false)}
+          />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="relative w-full max-w-sm bg-white dark:bg-slate-900 rounded-3xl p-8 shadow-2xl border border-slate-200 dark:border-slate-800"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-2xl flex items-center justify-center mb-6">
+                <ShieldCheck className="w-8 h-8 text-amber-600 dark:text-amber-400" />
+              </div>
+              <h3 className="text-xl font-display font-black text-slate-800 dark:text-white mb-2">Assinatura Digital</h3>
+              <p className="text-sm font-medium text-slate-500 mb-8">
+                Insira o seu PIN de 4 dígitos para assinar e emitir oficialmente este título de propriedade.
+              </p>
+
+              <div className="w-full space-y-4">
+                <div>
+                  <input
+                    type="password"
+                    maxLength={4}
+                    value={pinValue}
+                    onChange={(e) => {
+                      setPinValue(e.target.value.replace(/\D/g, ''));
+                      setPinError(false);
+                    }}
+                    placeholder="••••"
+                    className={cn(
+                      "w-2/3 mx-auto block text-center text-3xl tracking-[0.5em] font-black font-mono py-4 rounded-xl border bg-slate-50 dark:bg-slate-950 focus:outline-none focus:ring-4 transition-all",
+                      pinError 
+                        ? "border-rose-500 focus:ring-rose-500/20 text-rose-600" 
+                        : "border-slate-200 dark:border-slate-800 focus:border-amber-500 focus:ring-amber-500/20 text-slate-800 dark:text-white"
+                    )}
+                  />
+                  {pinError && (
+                    <p className="text-xs font-bold text-rose-500 mt-2">PIN incorreto. Tente novamente.</p>
+                  )}
+                </div>
+
+                <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-xl mt-4">
+                  <div className="flex items-start gap-3">
+                    <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+                    <p className="text-xs font-medium text-blue-700 dark:text-blue-400 text-left">
+                      Para efeitos de demonstração, o <strong>PIN correto é 1234</strong>.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    onClick={() => {
+                      setShowPinModal(false);
+                      setPinValue('');
+                      setPinError(false);
+                    }}
+                    disabled={isSigning}
+                    className="flex-1 py-3 px-4 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleSignSubmit}
+                    disabled={pinValue.length !== 4 || isSigning}
+                    className="flex-1 py-3 px-4 rounded-xl font-bold bg-amber-500 hover:bg-amber-600 text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2"
+                  >
+                    {isSigning ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        A Assinar...
+                      </>
+                    ) : (
+                      'Confirmar'
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
+            onClick={() => setShowSuccessModal(false)}
+          />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 shadow-2xl border border-emerald-200 dark:border-emerald-900/50 text-center overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-[80px] translate-y-[-100px] translate-x-[100px]"></div>
+            
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="w-24 h-24 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-emerald-500/10 border border-emerald-500/20 relative">
+                <Check className="w-12 h-12 text-emerald-600 dark:text-emerald-400 relative z-10" />
+                <div className="absolute inset-0 border-[4px] border-emerald-500 border-dashed rounded-full animate-[spin_10s_linear_infinite] opacity-30"></div>
+              </div>
+              
+              <h3 className="text-3xl font-display font-black text-slate-800 dark:text-white mb-3">Título Emitido!</h3>
+              <p className="text-base font-medium text-emerald-700 dark:text-emerald-400 mb-8 max-w-[280px]">
+                O Título de Propriedade foi assinado digitalmente e está agora ativo no Sistema Nacional.
+              </p>
+
+              <div className="bg-slate-50 dark:bg-slate-950 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 w-full mb-8 relative group">
+                <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">Código de Verificação QR</p>
+                <div className="bg-white p-3 rounded-2xl w-32 h-32 mx-auto shadow-sm border border-slate-200 dark:border-slate-800 relative z-10 hover:scale-105 transition-transform cursor-pointer" onClick={() => window.open(validateUrl, '_blank')}>
+                   <QRCode
+                      value={validateUrl}
+                      size={102}
+                      className="opacity-90"
+                      viewBox={`0 0 256 256`}
+                    />
+                </div>
+                <p className="text-[10px] uppercase font-bold tracking-widest text-slate-500 mt-4">Clique para testar verificação</p>
+              </div>
+
+              <button
+                onClick={() => setShowSuccessModal(false)}
+                className="w-full py-4 rounded-2xl font-black uppercase tracking-widest bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20 transition-all active:scale-[0.98]"
+              >
+                Concluir
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
