@@ -28,6 +28,8 @@ import {
   Info
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { UniversalMap } from '../maps/UniversalMap';
+import { Polygon } from 'react-leaflet';
 
 // Unified simulation map for Titles with the requested 4 states:
 // 1. Emitido (issued)
@@ -487,22 +489,37 @@ export function TitleDetailsView() {
 
           {/* Map Preview */}
           <div className="bg-slate-900 dark:bg-slate-950 rounded-[3rem] h-[450px] relative overflow-hidden group shadow-2xl">
-             <div className="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1541462608141-ad6b3eb16995?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center"></div>
-             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+             <div className="absolute inset-0 z-0">
+                <UniversalMap 
+                   center={[0.33, 6.73]}
+                   zoom={14}
+                   provider="satellite"
+                   zoomControl={false}
+                >
+                  {data.status !== 'revoked' && (
+                    <Polygon 
+                      positions={[
+                        [0.34, 6.72],
+                        [0.35, 6.73],
+                        [0.335, 6.74],
+                        [0.32, 6.735],
+                        [0.325, 6.725]
+                      ]}
+                      pathOptions={{ 
+                        color: data.status === 'review' ? "#3b82f6" : "#10b981", 
+                        fillColor: data.status === 'review' ? "#3b82f6" : "#10b981", 
+                        fillOpacity: 0.4, 
+                        weight: 4,
+                        dashArray: '12, 8'
+                      }}
+                    />
+                  )}
+                </UniversalMap>
+             </div>
+             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent pointer-events-none z-10"></div>
              
-             {data.status !== 'revoked' ? (
-               <svg className="absolute inset-0 w-full h-full p-20" viewBox="0 0 1000 600">
-                  <path 
-                    d="M 300 200 L 500 150 L 700 250 L 650 450 L 350 500 Z" 
-                    fill={data.status === 'review' ? "rgba(59, 130, 246, 0.2)" : "rgba(16, 185, 129, 0.2)"} 
-                    stroke={data.status === 'review' ? "#3b82f6" : "#10b981"} 
-                    strokeWidth="4"
-                    strokeDasharray="12 8"
-                    className="animate-[dash_20s_linear_infinite]"
-                  />
-               </svg>
-             ) : (
-               <div className="absolute inset-0 flex items-center justify-center">
+             {data.status === 'revoked' && (
+               <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none backdrop-blur-sm">
                  <div className="w-[400px] h-[300px] border-4 border-dashed border-rose-500/55 rounded-[2rem] bg-rose-950/15 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center text-white">
                    <XCircle className="w-16 h-16 text-rose-500 mb-4 animate-bounce" />
                    <h4 className="font-display font-black text-lg uppercase tracking-wider">Georreferenciação Cancelada</h4>
@@ -511,7 +528,7 @@ export function TitleDetailsView() {
                </div>
              )}
 
-             <div className="absolute bottom-10 left-10 right-10 flex justify-between items-end">
+             <div className="absolute bottom-10 left-10 right-10 flex justify-between items-end z-30 pointer-events-none">
                 <div>
                    <p className="text-emerald-400 text-xs font-black uppercase tracking-[0.3em] mb-2">Visão por Satélite • DSGC GIS</p>
                    <h4 className="text-white text-2xl font-display font-black tracking-tight">{data.parcel.location}</h4>

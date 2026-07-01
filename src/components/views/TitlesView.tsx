@@ -193,6 +193,22 @@ export function TitlesView() {
   const navigate = useNavigate();
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState<'card' | 'table'>('table');
+  const [isMobile, setIsMobile] = useState(false);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      if (mobile && viewMode !== 'card') {
+        setViewMode('card');
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [viewMode]);
   
   // Real time synchronized database of titles
   const [titlesDb, setTitlesDb] = useState<any>(() => {
@@ -238,12 +254,6 @@ export function TitlesView() {
   const pendingCount = titlesList.filter((t: any) => t.status === 'pending').length;
   const reviewCount = titlesList.filter((t: any) => t.status === 'review').length;
   const revokedCount = titlesList.filter((t: any) => t.status === 'revoked').length;
-
-  const STATS = [
-    { label: 'Títulos Emitidos', value: String(452 + issuedCount - 2), icon: FileCheck, color: 'emerald' },
-    { label: 'Emissão Pendente', value: String(128 + pendingCount - 1), icon: Clock, color: 'blue' },
-    { label: 'Sob Revisão Técnica', value: String(12 + reviewCount - 1), icon: AlertCircle, color: 'amber' },
-  ];
 
   const CHART_DATA = [
     { name: 'Habitacional', value: 60 + (customUsage === 'Habitacional Consolidado' ? 1 : 0), color: '#10b981' },
@@ -669,52 +679,43 @@ export function TitlesView() {
         )}
       </AnimatePresence>
 
-      {/* METRIC CARDS GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {STATS.map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.08 }}
-            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-7 rounded-[2.5rem] shadow-sm relative overflow-hidden group"
-          >
-            <div className="flex justify-between items-start relative z-10">
-              <div className={cn(
-                "w-12 h-12 rounded-2xl flex items-center justify-center transition-transform duration-500 group-hover:scale-110",
-                stat.color === 'emerald' ? "bg-emerald-500/10 text-emerald-500" :
-                stat.color === 'blue' ? "bg-blue-500/10 text-blue-500" :
-                "bg-amber-500/10 text-amber-500"
-              )}>
-                <stat.icon className="w-6 h-6" />
-              </div>
-              <div className="w-1.5 h-1.5 rounded-full bg-slate-200 dark:bg-slate-800"></div>
-            </div>
-            <div className="mt-5 relative z-10">
-              <h3 className="text-3xl font-display font-black tracking-tight">{stat.value}</h3>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-2">{stat.label}</p>
-            </div>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-slate-100 dark:from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          </motion.div>
-        ))}
-      </div>
-
       {/* SEARCH AND GRID CONTAINER */}
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
         <div className="xl:col-span-3 space-y-6">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[2.5rem] shadow-sm">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input 
-                  type="text" 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Pesquisar por Título # ou Nome do Proprietário..."
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-150 dark:border-slate-800 rounded-xl text-xs font-bold focus:outline-none focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500/50 transition-all font-semibold text-slate-800 dark:text-white"
-                />
-              </div>
-              <div className="flex flex-wrap gap-1.5 p-1.5 bg-slate-100 dark:bg-slate-950 border border-slate-105 dark:border-slate-850 rounded-2xl">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl flex flex-wrap items-center justify-between gap-4 shadow-sm">
+            <div className="relative flex-1 min-w-[240px]">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input 
+                type="text" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Pesquisar por Título # ou Nome..."
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-855 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500/50 transition-all font-medium"
+              />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-250"
+                >
+                  Limpar
+                </button>
+              )}
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-3">
+              <button 
+                onClick={() => setShowFilters(!showFilters)}
+                className={cn(
+                  "px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shadow-sm flex items-center gap-2",
+                  showFilters 
+                    ? "bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400" 
+                    : "bg-white dark:bg-slate-800 text-slate-500 hover:text-emerald-600"
+                )}
+              >
+                <Filter className="w-4 h-4" /> Filtros Avançados
+              </button>
+              
+              <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-850">
                 {[
                   { id: 'all', label: 'Todos' },
                   { id: 'issued', label: 'Emitidos' },
@@ -726,95 +727,230 @@ export function TitlesView() {
                     key={t.id}
                     onClick={() => setFilter(t.id)}
                     className={cn(
-                      "px-4.5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                      "px-3.5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all",
                       filter === t.id 
                         ? "bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm" 
-                        : "text-slate-400 hover:text-slate-700 dark:hover:text-slate-350"
+                        : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-350"
                     )}
                   >
                     {t.label}
                   </button>
                 ))}
               </div>
-            </div>
 
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full min-w-[760px] text-left">
-                <thead>
-                  <tr className="border-b border-slate-100 dark:border-slate-800 text-slate-400">
-                    <th className="pb-4.5 pl-6 text-[10px] font-black uppercase tracking-[0.2em]">Referência</th>
-                    <th className="pb-4.5 px-4 text-[10px] font-black uppercase tracking-[0.2em]">Titular e Regime NIF</th>
-                    <th className="pb-4.5 px-4 text-[10px] font-black uppercase tracking-[0.2em]">Localização Lote</th>
-                    <th className="pb-4.5 px-4 text-[10px] font-black uppercase tracking-[0.2em] text-center">Status Registo</th>
-                    <th className="pb-4.5 pr-6 text-right text-[10px] font-black uppercase tracking-[0.2em]">Acções</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50 dark:divide-slate-800/60">
-                  {filteredTitles.map((title: any) => (
-                    <tr 
-                      key={title.id} 
-                      onClick={() => navigate(`/titles/${title.id}`)}
-                      className="group hover:bg-slate-55 dark:hover:bg-slate-950/40 transition-colors cursor-pointer"
-                    >
-                      <td className="py-5.5 pl-6">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover:bg-emerald-500/10 transition-colors">
-                            <Hash className="w-4 h-4 text-slate-400 group-hover:text-emerald-500 transition-colors" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-black tracking-tight text-slate-900 dark:text-white leading-tight">{title.id}</p>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase mt-0.5 tracking-wider">{title.area} • {title.parcel?.id || 'REC-00'}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-5.5 px-4">
-                        <p className="text-sm font-bold text-slate-900 dark:text-white leading-tight">{title.utente.name}</p>
-                        <p className="text-[10px] font-bold text-slate-400 mt-0.5 uppercase">Registo: {title.date}</p>
-                      </td>
-                      <td className="py-5.5 px-4">
-                        <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                          <MapPin className="w-3.5 h-3.5 shrink-0 text-slate-400" />
-                          <span className="text-xs font-semibold truncate max-w-[170px]">{title.location}</span>
-                        </div>
-                      </td>
-                      <td className="py-5.5 px-4">
-                         <div className={cn(
-                           "mx-auto flex items-center justify-center gap-1 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest max-w-[120px]",
-                           title.status === 'issued' ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/10" :
-                           title.status === 'pending' ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/10" :
-                           title.status === 'review' ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/10" :
-                           "bg-rose-500/10 text-rose-600 dark:text-rose-450 border border-rose-500/10"
-                         )}>
-                           {title.status === 'issued' ? <CheckCircle2 className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
-                           {title.status === 'issued' ? 'Emitido' : title.status === 'pending' ? 'Pendente' : title.status === 'review' ? 'Revisão' : 'Revogado'}
-                         </div>
-                      </td>
-                      <td className="py-5.5 pr-6 text-right">
-                        <div className="flex justify-end gap-2">
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); navigate(`/titles/${title.id}`); }}
-                            className="p-2 hover:bg-emerald-500/10 rounded-xl transition-colors text-slate-400 hover:text-emerald-500"
-                            title="Abrir Instrumento Requerido"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                  {filteredTitles.length === 0 && (
-                    <tr>
-                      <td colSpan={5} className="py-12 text-center opacity-50">
-                        <span className="text-xs font-black uppercase tracking-widest text-slate-400">Nenhum registro correspondente</span>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+              <div className={cn("bg-slate-100 dark:bg-slate-950 p-1 rounded-2xl border border-slate-200 dark:border-slate-850 hidden lg:flex", isMobile ? "hidden" : "")}>
+                <button 
+                  onClick={() => setViewMode('card')}
+                  title="Visualização em Cartões"
+                  className={cn("px-3 py-2 rounded-xl transition-all flex items-center gap-2", viewMode === 'card' ? "bg-white dark:bg-slate-800 shadow-sm text-emerald-600 dark:text-emerald-400" : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-350")}
+                >
+                  <MapPin className="w-4 h-4" />
+                </button>
+                <button 
+                  onClick={() => setViewMode('table')}
+                  title="Visualização em Tabela"
+                  className={cn("px-3 py-2 rounded-xl transition-all flex items-center gap-2", viewMode === 'table' ? "bg-white dark:bg-slate-800 shadow-sm text-emerald-600 dark:text-emerald-400" : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-350")}
+                >
+                  <FileCheck className="w-4 h-4" />
+                </button>
+              </div>
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 gap-4 md:hidden">
-              {filteredTitles.map((title: any) => (
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl overflow-hidden shadow-sm"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Distrito</label>
+                    <select className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 px-4 py-2.5 rounded-xl text-sm font-medium focus:outline-none focus:border-emerald-500">
+                      <option value="">Todos os Distritos</option>
+                      <option value="agua-grande">Água Grande</option>
+                      <option value="me-zochi">Mé-Zóchi</option>
+                      <option value="lemba">Lembá</option>
+                      <option value="lobata">Lobata</option>
+                      <option value="cantagalo">Cantagalo</option>
+                      <option value="caué">Caué</option>
+                      <option value="principe">RAP (Príncipe)</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Uso do Solo (Tipologia)</label>
+                    <select className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 px-4 py-2.5 rounded-xl text-sm font-medium focus:outline-none focus:border-emerald-500">
+                      <option value="">Todas as Tipologias</option>
+                      <option value="habitacional">Habitacional Consolidado</option>
+                      <option value="comercial">Comercial / Industrial</option>
+                      <option value="agricola">Agrícola</option>
+                      <option value="misto">Misto</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Intervalo de Datas</label>
+                    <input type="date" className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 px-4 py-2.5 rounded-xl text-sm font-medium focus:outline-none focus:border-emerald-500" />
+                  </div>
+                </div>
+                <div className="flex justify-end mt-6">
+                  <button onClick={() => setShowFilters(false)} className="px-5 py-2.5 bg-emerald-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-emerald-600 transition-colors">
+                    Aplicar Filtros
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {viewMode === 'table' ? (
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-4 md:p-8 shadow-sm">
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full min-w-[760px] text-left">
+                  <thead>
+                    <tr className="border-b border-slate-100 dark:border-slate-800 text-slate-400">
+                      <th className="pb-4.5 pl-6 text-[10px] font-black uppercase tracking-[0.2em]">Referência</th>
+                      <th className="pb-4.5 px-4 text-[10px] font-black uppercase tracking-[0.2em]">Titular e Regime NIF</th>
+                      <th className="pb-4.5 px-4 text-[10px] font-black uppercase tracking-[0.2em]">Localização Lote</th>
+                      <th className="pb-4.5 px-4 text-[10px] font-black uppercase tracking-[0.2em] text-center">Status Registo</th>
+                      <th className="pb-4.5 pr-6 text-right text-[10px] font-black uppercase tracking-[0.2em]">Acções</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50 dark:divide-slate-800/60">
+                    {filteredTitles.map((title: any) => (
+                      <tr 
+                        key={title.id} 
+                        onClick={() => navigate(`/titles/${title.id}`)}
+                        className="group hover:bg-slate-55 dark:hover:bg-slate-950/40 transition-colors cursor-pointer"
+                      >
+                        <td className="py-5.5 pl-6">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover:bg-emerald-500/10 transition-colors">
+                              <Hash className="w-4 h-4 text-slate-400 group-hover:text-emerald-500 transition-colors" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-black tracking-tight text-slate-900 dark:text-white leading-tight">{title.id}</p>
+                              <p className="text-[10px] font-bold text-slate-400 uppercase mt-0.5 tracking-wider">{title.area} • {title.parcel?.id || 'REC-00'}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-5.5 px-4">
+                          <p className="text-sm font-bold text-slate-900 dark:text-white leading-tight">{title.utente.name}</p>
+                          <p className="text-[10px] font-bold text-slate-400 mt-0.5 uppercase">Registo: {title.date}</p>
+                        </td>
+                        <td className="py-5.5 px-4">
+                          <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                            <MapPin className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+                            <span className="text-xs font-semibold truncate max-w-[170px]">{title.location}</span>
+                          </div>
+                        </td>
+                        <td className="py-5.5 px-4">
+                           <div className={cn(
+                             "mx-auto flex items-center justify-center gap-1 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest max-w-[120px]",
+                             title.status === 'issued' ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/10" :
+                             title.status === 'pending' ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/10" :
+                             title.status === 'review' ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/10" :
+                             "bg-rose-500/10 text-rose-600 dark:text-rose-450 border border-rose-500/10"
+                           )}>
+                             {title.status === 'issued' ? <CheckCircle2 className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
+                             {title.status === 'issued' ? 'Emitido' : title.status === 'pending' ? 'Pendente' : title.status === 'review' ? 'Revisão' : 'Revogado'}
+                           </div>
+                        </td>
+                        <td className="py-5.5 pr-6 text-right">
+                          <div className="flex justify-end gap-2">
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); navigate(`/titles/${title.id}`); }}
+                              className="p-2 hover:bg-emerald-500/10 rounded-xl transition-colors text-slate-400 hover:text-emerald-500"
+                              title="Abrir Instrumento Requerido"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                    {filteredTitles.length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="py-12 text-center opacity-50">
+                          <span className="text-xs font-black uppercase tracking-widest text-slate-400">Nenhum registro correspondente</span>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredTitles.map((title: any, i: number) => (
+                <motion.div
+                  key={title.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  onClick={() => navigate(`/titles/${title.id}`)}
+                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl shadow-sm hover:shadow-md hover:border-emerald-500/30 transition-all cursor-pointer group flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-500/20 transition-colors">
+                          <Hash className="w-4 h-4 text-slate-500 group-hover:text-emerald-600 transition-colors" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-black tracking-tight text-slate-900 dark:text-white leading-tight">{title.id}</p>
+                          <p className="text-[9px] font-bold text-slate-400 mt-0.5 uppercase tracking-wider">{title.area} • {title.parcel?.id || 'REC-00'}</p>
+                        </div>
+                      </div>
+                      <div className={cn(
+                        "flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-xl text-[9px] font-black uppercase tracking-widest shrink-0 border",
+                        title.status === 'issued' ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/10" :
+                        title.status === 'pending' ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/10" :
+                        title.status === 'review' ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/10" :
+                        "bg-rose-500/10 text-rose-600 dark:text-rose-450 border-rose-500/10"
+                      )}>
+                        {title.status === 'issued' ? <CheckCircle2 className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
+                        {title.status === 'issued' ? 'Emitido' : title.status === 'pending' ? 'Pendente' : title.status === 'review' ? 'Revisão' : 'Revogado'}
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 mb-4">
+                      <div className="p-2.5 bg-slate-50 dark:bg-slate-950/50 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Titular / Proprietário</p>
+                        <p className="font-bold text-sm text-slate-900 dark:text-white leading-tight">{title.utente.name}</p>
+                        <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1.5">
+                           <FileCheck className="w-3 h-3" /> NIF: {title.utente.nif || 'N/A'}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 text-[11px] font-medium px-1">
+                        <MapPin className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">{title.location}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3 mt-1">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Reg: {title.date}</p>
+                    <div className="text-emerald-500 font-bold text-[9px] uppercase tracking-wider flex items-center gap-1 group-hover:text-emerald-600 transition-colors">
+                      Detalhes 
+                      <div className="w-5 h-5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+                        <ChevronRight className="w-3 h-3" />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+              {filteredTitles.length === 0 && (
+                <div className="col-span-1 md:col-span-2 lg:col-span-3 py-12 text-center opacity-50 bg-white dark:bg-slate-900 rounded-[2rem] border border-dashed border-slate-200 dark:border-slate-800">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nenhum registro correspondente</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 gap-4 md:hidden">
+            {viewMode === 'table' && filteredTitles.map((title: any) => (
                 <div
                   key={title.id}
                   onClick={() => navigate(`/titles/${title.id}`)}
@@ -876,7 +1012,6 @@ export function TitlesView() {
               )}
             </div>
           </div>
-        </div>
 
         <div className="space-y-8">
            {/* Tipologia de Uso Pie Chart card */}

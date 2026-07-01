@@ -177,18 +177,18 @@ export function LandingView() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.2 }}
-                className="group p-10 rounded-[3rem] bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800/50 hover:border-emerald-500/30 hover:bg-white dark:hover:bg-slate-900 transition-all duration-500 shadow-sm hover:shadow-2xl hover:shadow-emerald-500/5"
+                className="group p-8 rounded-[2rem] bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800/50 hover:border-emerald-500/30 hover:bg-white dark:hover:bg-slate-900 transition-all duration-500 shadow-sm hover:shadow-xl hover:shadow-emerald-500/5"
               >
                 <div className={cn(
-                  "w-16 h-16 rounded-2xl flex items-center justify-center mb-8 transition-transform duration-500 group-hover:scale-110 shadow-lg",
+                  "w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-transform duration-500 group-hover:scale-110 shadow-lg",
                   feature.color === 'emerald' ? "bg-emerald-500 text-white shadow-emerald-500/20" :
                   feature.color === 'blue' ? "bg-blue-500 text-white shadow-blue-500/20" :
                   "bg-purple-500 text-white shadow-purple-500/20"
                 )}>
-                  <feature.icon className="w-8 h-8" />
+                  <feature.icon className="w-7 h-7" />
                 </div>
-                <h3 className="text-2xl font-display font-black tracking-tight text-slate-900 dark:text-white mb-4">{feature.title}</h3>
-                <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-8">
+                <h3 className="text-xl font-display font-black tracking-tight text-slate-900 dark:text-white mb-3">{feature.title}</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-6">
                   {feature.description}
                 </p>
                 <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-black text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
@@ -206,8 +206,8 @@ export function LandingView() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div className="order-2 lg:order-1 grid grid-cols-1 sm:grid-cols-2 gap-6">
               {UTILITIES.map((u, i) => (
-                <div key={i} className="p-8 rounded-[2.5rem] bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border border-white dark:border-slate-800 flex flex-col items-center text-center group hover:bg-emerald-500 hover:text-white transition-all duration-500 cursor-default shadow-sm">
-                  <u.icon className="w-8 h-8 text-emerald-500 group-hover:text-white mb-4 transition-colors" />
+                <div key={i} className="p-6 rounded-[2rem] bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border border-white dark:border-slate-800 flex flex-col items-center text-center group hover:bg-emerald-500 hover:text-white transition-all duration-500 cursor-default shadow-sm">
+                  <u.icon className="w-6 h-6 text-emerald-500 group-hover:text-white mb-3 transition-colors" />
                   <p className="font-display font-black text-sm tracking-tight text-slate-900 dark:text-white group-hover:text-white transition-colors">{u.title}</p>
                 </div>
               ))}

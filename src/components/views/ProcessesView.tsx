@@ -150,6 +150,7 @@ export function ProcessesView() {
   const [workflowMode, setWorkflowMode] = useState<'traditional' | 'international'>('international');
   const [drawerTab, setDrawerTab] = useState<'dossier' | 'title'>('dossier');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
   const boardScrollRef = useRef<HTMLDivElement | null>(null);
   const boardDragStateRef = useRef({
     isDragging: false,
@@ -571,12 +572,76 @@ export function ProcessesView() {
           )}
         </div>
         <div className="flex items-center gap-2.5">
+          <button 
+            onClick={() => setShowFilters(!showFilters)}
+            className={cn(
+              "px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shadow-sm flex items-center gap-2",
+              showFilters 
+                ? "bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400" 
+                : "bg-white dark:bg-slate-800 text-slate-500 hover:text-emerald-600"
+            )}
+          >
+            <Filter className="w-4 h-4" /> Filtros Avançados
+          </button>
           <div className="px-4 py-2.5 bg-slate-100 dark:bg-slate-950 border border-slate-100 dark:border-slate-850 rounded-xl text-xs font-black uppercase tracking-wider text-slate-500 flex items-center gap-2">
             <CheckSquare className="w-3.5 h-3.5 text-emerald-500" />
             <span>Resultados: {filteredProcesses.length}</span>
           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {showFilters && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl overflow-hidden shadow-sm mb-6"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Estado / Fase</label>
+                <select className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 px-4 py-2.5 rounded-xl text-sm font-medium focus:outline-none focus:border-emerald-500">
+                  <option value="">Todas as Fases</option>
+                  <option value="entry">Entrada do Pedido</option>
+                  <option value="field">Trabalho de Campo</option>
+                  <option value="juridic">Análise Jurídica</option>
+                  <option value="issue">Emissão</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Urgência</label>
+                <select className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 px-4 py-2.5 rounded-xl text-sm font-medium focus:outline-none focus:border-emerald-500">
+                  <option value="">Qualquer Prioridade</option>
+                  <option value="urgent">Urgente</option>
+                  <option value="normal">Normal</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Distrito</label>
+                <select className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 px-4 py-2.5 rounded-xl text-sm font-medium focus:outline-none focus:border-emerald-500">
+                  <option value="">Todos os Distritos</option>
+                  <option value="agua-grande">Água Grande</option>
+                  <option value="me-zochi">Mé-Zóchi</option>
+                  <option value="lemba">Lembá</option>
+                  <option value="lobata">Lobata</option>
+                  <option value="cantagalo">Cantagalo</option>
+                  <option value="caué">Caué</option>
+                  <option value="principe">RAP (Príncipe)</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex justify-end mt-6">
+              <button 
+                onClick={() => setShowFilters(false)}
+                className="px-5 py-2.5 bg-emerald-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-emerald-600 transition-colors"
+              >
+                Aplicar Filtros
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* RENDER VIEW SCHEME */}
       <div className="relative pb-4">

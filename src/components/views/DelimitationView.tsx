@@ -28,7 +28,8 @@ import {
   Plus,
   RefreshCw,
   Eye,
-  CheckSquare
+  CheckSquare,
+  LayoutDashboard
 } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
@@ -133,16 +134,25 @@ export function DelimitationView() {
   });
 
   // Pre-load current process ID in local storage for Delimitation mapping module
-  const [selectedProcess, setSelectedProcess] = useState<string | null>(() => {
-    const cachedId = localStorage.getItem('STP_ACTIVE_DELIMIT_ID');
-    if (cachedId) {
-      // Verify if ID exists inside active list
-      return cachedId;
-    }
-    return activeProcessList[0]?.id || 'STP-PROCESS-8842';
-  });
+  const [selectedProcess, setSelectedProcess] = useState<string | null>(null);
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
+  const [isMobile, setIsMobile] = useState(false);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      if (mobile && viewMode !== 'card') {
+        setViewMode('card');
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [viewMode]);
 
   // Fallback structures for custom or dynamically linked processes
   const getFallbackGeometry = (procId: string) => {
@@ -643,77 +653,231 @@ export function DelimitationView() {
 
       {/* VIEW 1: PROCESS LIST (LANDING) */}
       {!selectedProcess ? (
-        <div className="space-y-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-6 relative pb-20">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
               <h1 className="text-4xl font-display font-black tracking-tighter">Revisão e Delimitação</h1>
-              <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Inspeção topográfica estruturada e vetorização SIG das parcelas em STP.</p>
+              <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">Inspeção topográfica estruturada e vetorização SIG das parcelas em STP.</p>
             </div>
-            <div className="flex w-full md:w-auto gap-3">
-              <div className="relative group flex-1 md:w-[320px] md:flex-none">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input 
-                  type="text" 
-                  placeholder="Pesquisar processos (Por ID, nome)..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all font-medium"
-                />
-              </div>
-              <button className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 transition-all shrink-0">
-                <Filter className="w-5 h-5 text-slate-500" />
-              </button>
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+               <div className={cn("bg-slate-100 dark:bg-slate-800 p-1 rounded-xl", isMobile ? "hidden" : "flex")}>
+                 <button 
+                   onClick={() => setViewMode('card')}
+                   title="Visualização em Cartões"
+                   className={cn("px-3.5 py-2.5 rounded-lg transition-all flex items-center gap-2 text-xs font-black uppercase tracking-wider", viewMode === 'card' ? "bg-white dark:bg-slate-700 shadow-sm text-emerald-600 dark:text-emerald-400" : "text-slate-400")}
+                 >
+                   <MapIcon className="w-4 h-4" />
+                   <span>Cartões</span>
+                 </button>
+                 <button 
+                   onClick={() => setViewMode('table')}
+                   title="Visualização em Tabela"
+                   className={cn("px-3.5 py-2.5 rounded-lg transition-all flex items-center gap-2 text-xs font-black uppercase tracking-wider", viewMode === 'table' ? "bg-white dark:bg-slate-700 shadow-sm text-emerald-600 dark:text-emerald-400" : "text-slate-400")}
+                 >
+                   <Layers className="w-4 h-4" />
+                   <span>Lista</span>
+                 </button>
+               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredProcesses.map((process, i) => (
-              <motion.div
-                key={process.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[2.5rem] shadow-sm hover:shadow-xl hover:border-emerald-500/30 transition-all duration-500 flex flex-col justify-between h-[380px]"
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl flex flex-wrap items-center justify-between gap-4 shadow-sm">
+            <div className="relative flex-1 min-w-[300px]">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input 
+                type="text" 
+                placeholder="Pesquisar processos (Por ID, nome)..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-855 rounded-2xl text-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500/50 transition-all font-medium"
+              />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-250"
+                >
+                  Limpar
+                </button>
+              )}
+            </div>
+            <div className="flex items-center gap-2.5">
+              <button 
+                onClick={() => setShowFilters(!showFilters)}
+                className={cn(
+                  "px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shadow-sm flex items-center gap-2",
+                  showFilters 
+                    ? "bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400" 
+                    : "bg-white dark:bg-slate-800 text-slate-500 hover:text-emerald-600"
+                )}
               >
-                <div>
-                  <div className="flex justify-between items-start mb-6">
-                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
-                      <MapIcon className="w-6 h-6 text-emerald-500" />
-                    </div>
-                    <div className={cn(
-                      "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest",
-                      process.status === 'ready' ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-orange-500/10 text-orange-600 dark:text-orange-400"
-                    )}>
-                      {process.status === 'ready' ? 'Apto a Delimitar' : 'Aguardando Medição'}
-                    </div>
-                  </div>
+                <Filter className="w-4 h-4" /> Filtros Avançados
+              </button>
+              <div className="px-4 py-2.5 bg-slate-100 dark:bg-slate-950 border border-slate-100 dark:border-slate-850 rounded-xl text-xs font-black uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                Resultados: {filteredProcesses.length}
+              </div>
+            </div>
+          </div>
 
-                  <div className="mb-6">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">{process.id}</p>
-                    <h3 className="text-xl font-display font-black tracking-tight leading-tight group-hover:text-emerald-500 transition-colors line-clamp-2">{process.applicant}</h3>
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl overflow-hidden shadow-sm"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Estado de Medição</label>
+                    <select className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 px-4 py-2.5 rounded-xl text-sm font-medium focus:outline-none focus:border-emerald-500">
+                      <option value="">Todos os Estados</option>
+                      <option value="ready">Disponível para Análise</option>
+                      <option value="pending">Pendente Topografia</option>
+                    </select>
                   </div>
-
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400">
-                      <MapPin className="w-4 h-4 shrink-0" />
-                      <span className="text-xs font-semibold line-clamp-1">{process.location}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-slate-500 dark:text-slate-400">
-                      <Maximize2 className="w-4 h-4 shrink-0" />
-                      <span className="text-xs font-semibold">Área Requerida: {process.area}</span>
-                    </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Distrito</label>
+                    <select className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 px-4 py-2.5 rounded-xl text-sm font-medium focus:outline-none focus:border-emerald-500">
+                      <option value="">Todos os Distritos</option>
+                      <option value="agua-grande">Água Grande</option>
+                      <option value="me-zochi">Mé-Zóchi</option>
+                      <option value="lemba">Lembá</option>
+                      <option value="lobata">Lobata</option>
+                      <option value="cantagalo">Cantagalo</option>
+                      <option value="caué">Caué</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Intervalo de Área</label>
+                    <select className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 px-4 py-2.5 rounded-xl text-sm font-medium focus:outline-none focus:border-emerald-500">
+                      <option value="">Qualquer Tamanho</option>
+                      <option value="small">Menos de 500m²</option>
+                      <option value="medium">500m² - 5,000m²</option>
+                      <option value="large">Mais de 5,000m²</option>
+                    </select>
                   </div>
                 </div>
-
-                <button 
-                  onClick={() => setSelectedProcess(process.id)}
-                  className="w-full py-4 rounded-xl font-bold text-xs tracking-widest uppercase transition-all flex items-center justify-center gap-2 premium-gradient text-white shadow-lg shadow-emerald-500/20 hover:scale-[1.03]"
-                >
-                  Modelar Polígono <ChevronRight className="w-4 h-4" />
-                </button>
+                <div className="flex justify-end mt-6">
+                  <button 
+                    onClick={() => setShowFilters(false)}
+                    className="px-5 py-2.5 bg-emerald-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-emerald-600 transition-colors"
+                  >
+                    Aplicar Filtros
+                  </button>
+                </div>
               </motion.div>
-            ))}
-          </div>
+            )}
+          </AnimatePresence>
+
+          {viewMode === 'card' ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+              {filteredProcesses.map((process, i) => (
+                <motion.div
+                  key={process.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl shadow-sm hover:shadow-md hover:border-emerald-500/30 transition-all duration-300 group cursor-pointer flex flex-col justify-between"
+                  onClick={() => setSelectedProcess(process.id)}
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
+                        <MapIcon className="w-5 h-5" />
+                      </div>
+                      <div className={cn(
+                        "px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider shrink-0",
+                        process.status === 'ready' ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600" : "bg-orange-50 dark:bg-orange-500/10 text-orange-600"
+                      )}>
+                        {process.status === 'ready' ? 'Apto a Delimitar' : 'Aguardando'}
+                      </div>
+                    </div>
+
+                    <div className="mb-3">
+                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 mb-0.5">{process.id}</p>
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-2 leading-snug">{process.applicant}</h3>
+                    </div>
+
+                    <div className="space-y-1.5 mb-4 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-700/30">
+                      <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+                        <MapPin className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+                        <span className="text-[11px] font-medium truncate">{process.location}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+                        <Maximize2 className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+                        <span className="text-[11px] font-semibold truncate tracking-tight">{process.area}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end">
+                     <button 
+                       onClick={(e) => { e.stopPropagation(); setSelectedProcess(process.id); }}
+                       className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 transition-colors bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 px-3 py-1.5 rounded-lg shadow-sm hover:bg-emerald-100 dark:hover:bg-emerald-500/20 flex items-center gap-1.5"
+                     >
+                       Modelar <ChevronRight className="w-3.5 h-3.5" />
+                     </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-3xl overflow-hidden shadow-sm">
+               <div className="overflow-x-auto">
+                 <table className="w-full text-left border-collapse">
+                   <thead className="bg-slate-50 dark:bg-slate-950 border-b border-slate-100 dark:border-slate-850">
+                     <tr>
+                       <th className="pl-8 pr-4 py-4.5 font-bold text-xs uppercase tracking-wider text-slate-400">Processo / Requerente</th>
+                       <th className="px-6 py-4.5 font-bold text-xs uppercase tracking-wider text-slate-400">Localização</th>
+                       <th className="px-6 py-4.5 font-bold text-xs uppercase tracking-wider text-slate-400">Área</th>
+                       <th className="px-6 py-4.5 font-bold text-xs uppercase tracking-wider text-slate-400">Status</th>
+                       <th className="pr-8 pl-4 py-4.5 text-right font-bold text-xs uppercase tracking-wider text-slate-400">Ações</th>
+                     </tr>
+                   </thead>
+                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                     {filteredProcesses.map((process) => (
+                       <tr 
+                         key={process.id} 
+                         onClick={() => setSelectedProcess(process.id)}
+                         className="hover:bg-slate-50/80 dark:hover:bg-slate-950/60 transition-all cursor-pointer group"
+                       >
+                         <td className="pl-8 pr-4 py-4">
+                           <div className="flex items-center gap-3">
+                             <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0">
+                               <MapIcon className="w-4 h-4" />
+                             </div>
+                             <div className="min-w-0 flex-1">
+                               <p className="font-bold text-sm tracking-tight text-slate-800 dark:text-slate-100 truncate">{process.applicant}</p>
+                               <p className="text-[10px] font-semibold text-slate-450 opacity-70 uppercase tracking-widest">{process.id}</p>
+                             </div>
+                           </div>
+                         </td>
+                         <td className="px-6 py-4">
+                           <span className="text-sm font-medium text-slate-600 dark:text-slate-300 line-clamp-1">{process.location}</span>
+                         </td>
+                         <td className="px-6 py-4">
+                           <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{process.area}</span>
+                         </td>
+                         <td className="px-6 py-4">
+                           <div className={cn(
+                             "inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-[10px] font-black uppercase tracking-wider",
+                             process.status === 'ready' ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600" : "bg-orange-50 dark:bg-orange-500/10 text-orange-600"
+                           )}>
+                             {process.status === 'ready' ? 'Apto a Delimitar' : 'Aguardando Medição'}
+                           </div>
+                         </td>
+                         <td className="pr-8 pl-4 py-4 text-right">
+                           <button className="text-[10px] font-bold uppercase tracking-wider text-slate-500 hover:text-emerald-600 transition-colors bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg shadow-sm hover:border-emerald-500/30">
+                             Abrir
+                           </button>
+                         </td>
+                       </tr>
+                     ))}
+                   </tbody>
+                 </table>
+               </div>
+             </div>
+          )}
         </div>
       ) : (
         
@@ -749,6 +913,13 @@ export function DelimitationView() {
                 Guardar Rascunho
               </button>
               <button 
+                onClick={() => navigate('/planning', { state: { processId: selectedProcess } })}
+                className="px-6 py-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors flex items-center gap-2 shadow-sm"
+              >
+                <LayoutDashboard className="w-4 h-4 text-blue-500" />
+                Planear Loteamento
+              </button>
+              <button 
                 onClick={handleApproveDelimitation}
                 className="premium-gradient text-white px-8 py-4 rounded-2xl font-bold text-sm flex items-center gap-2 shadow-xl shadow-emerald-500/20 hover:brightness-105 transition-all"
               >
@@ -761,462 +932,80 @@ export function DelimitationView() {
           <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
             <div className="xl:col-span-3 space-y-6">
               
-              {/* INTERACTIVE WORKSTATION CANVAS */}
-              <div 
-                className={cn(
-                  "rounded-[2rem] sm:rounded-[3rem] h-[420px] sm:h-[520px] lg:h-[600px] overflow-hidden relative border shadow-2xl transition-all duration-500 bg-slate-900 border-slate-800",
-                  activeTool === 'draw' ? "ring-2 ring-emerald-500/40" : "",
-                  activeTool === 'ruler' ? "ring-2 ring-blue-500/40" : ""
-                )}
-              >
-                {/* 1. LAYER BACKDROP */}
-                <div className="absolute inset-0 overflow-hidden select-none pointer-events-none">
-                  {mapLayer === 'satellite' && (
-                    <>
-                      <div className="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1541462608141-ad6b3eb16995?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center transition-transform duration-[4000ms]" style={{ transform: `scale(${scaleZoom})` }} />
-                      <div className="absolute inset-0 bg-slate-950/20" />
-                    </>
-                  )}
-                  {mapLayer === 'terrain' && (
-                    <>
-                      <div className="absolute inset-0 opacity-45 bg-[url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center" style={{ transform: `scale(${scaleZoom})` }} />
-                      <div className="absolute inset-0 bg-slate-950/30" />
-                    </>
-                  )}
-                  {mapLayer === 'cad' && (
-                    <div className="absolute inset-0 bg-grid-pattern opacity-100" />
-                  )}
-                  
-                  {/* Background Grid Accent overlayfor CAD aesthetics */}
-                  <div className="absolute inset-0 bg-grid-lines pointer-events-none opacity-[0.03] dark:opacity-[0.07]" />
+              {/* LOT SELECTION FROM LAND PLANNING */}
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[2.5rem] shadow-sm">
+                <div className="mb-8">
+                  <h3 className="font-display font-black text-xl tracking-tight mb-2">Atribuição de Lote Planeado</h3>
+                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400 max-w-2xl">
+                    Selecione o lote ou parcela previamente desenhada no módulo de Planeamento de Loteamento para associar definitivamente a este processo.
+                  </p>
                 </div>
-
-                {/* 2. LIVE SVG VECTOR CANVAS */}
-                <svg 
-                  className="absolute inset-0 w-full h-full cursor-crosshair" 
-                  viewBox="0 0 1000 600"
-                  onMouseDown={handleMapMouseDown}
-                  onMouseMove={handleMapMouseMove}
-                  onMouseUp={handleMapMouseUp}
-                  onMouseLeave={handleMapMouseUp}
-                >
-                  {/* Surrounding mock parcels backdrop */}
-                  <polygon points="650,170 850,100 900,320 580,390" fill="rgba(255,255,255,0.01)" stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
-                  <polygon points="120,40 230,120 280,440 80,480" fill="rgba(255,255,255,0.01)" stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
-
-                  {/* Dynamic Closed Polyline path of the parcel being drawn */}
-                  {vertices.length >= 2 && (
-                    <polygon 
-                      points={vertices.map(v => `${v.x},${v.y}`).join(' ')} 
-                      fill="rgba(16, 185, 129, 0.12)" 
-                      stroke="#10b981" 
-                      strokeWidth="3.5"
-                      strokeDasharray={activeTool === 'draw' ? "8 6" : "none"}
-                      className="transition-all duration-300"
-                    />
-                  )}
-
-                  {/* Draw polygon segments if in drafting */}
-                  {activeTool === 'draw' && vertices.length > 0 && (
-                    <polygon 
-                      points={vertices.map(v => `${v.x},${v.y}`).join(' ')} 
-                      fill="none" 
-                      stroke="rgba(16, 185, 129, 0.4)" 
-                      strokeWidth="12"
-                      className="animate-pulse"
-                    />
-                  )}
-
-                  {/* Draw Ruler Distance Mode Indicator */}
-                  {activeTool === 'ruler' && rulerPoints.length > 0 && tempRulerEnd && (
-                    <>
-                      <line 
-                        x1={rulerPoints[0].x} 
-                        y1={rulerPoints[0].y} 
-                        x2={tempRulerEnd.x} 
-                        y2={tempRulerEnd.y} 
-                        stroke="#3b82f6" 
-                        strokeWidth="3" 
-                        strokeDasharray="6 4"
-                      />
-                      <circle cx={rulerPoints[0].x} cy={rulerPoints[0].y} r="8" fill="#3b82f6" />
-                      <circle cx={tempRulerEnd.x} cy={tempRulerEnd.y} r="6" fill="#3b82f6" />
-                      
-                      {/* Interactive dynamic ruler metric readout next to pointer */}
-                      <g transform={`translate(${(rulerPoints[0].x + tempRulerEnd.x) / 2}, ${(rulerPoints[0].y + tempRulerEnd.y) / 2 - 15})`}>
-                        <rect x="-60" y="-12" width="120" height="24" rx="6" fill="rgba(15,23,42,0.9)" stroke="#3b82f6" strokeWidth="1" />
-                        <text fill="#ffffff" fontSize="10" fontWeight="bold" textAnchor="middle" y="4">
-                          {(Math.sqrt((tempRulerEnd.x - rulerPoints[0].x)**2 + (tempRulerEnd.y - rulerPoints[0].y)**2) * 0.62).toFixed(1)} m
-                        </text>
-                      </g>
-                    </>
-                  )}
-
-                  {/* Interactive draggable vertices (Circles) */}
-                  {vertices.map((v, idx) => {
-                    const nextV = vertices[(idx + 1) % vertices.length];
-                    const midwayX = (v.x + nextV.x) / 2;
-                    const midwayY = (v.y + nextV.y) / 2;
-                    const segmentDist = Math.sqrt((nextV.x - v.x)**2 + (nextV.y - v.y)**2) * 0.62;
-
-                    return (
-                      <g key={v.id}>
-                        {/* Segment distance readout flag */}
-                        {vertices.length >= 2 && (
-                          <g transform={`translate(${midwayX}, ${midwayY})`}>
-                            <rect x="-35" y="-10" width="70" height="18" rx="5" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(16, 185, 129, 0.4)" strokeWidth="1" />
-                            <text fill="#10b981" fontSize="9" fontWeight="950" textAnchor="middle" y="2">
-                              {segmentDist.toFixed(1)} m
-                            </text>
-                          </g>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { id: 'GL-TRIN-001', name: 'Gleba A - Trindade', area: 50000, location: 'Mé-Zóchi', status: 'available' },
+                    { id: 'GL-AGUA-042', name: 'Talhão Central - Água Grande', area: 15000, location: 'Água Grande', status: 'available' },
+                    { id: 'GL-LOB-112', name: 'Zona de Expansão Norte', area: 120000, location: 'Lobata', status: 'available' },
+                    { id: 'LOTE-2026-A1', name: 'Lote Habitacional 1', area: 1245, location: 'Água Grande', status: 'available' },
+                    { id: 'LOTE-2026-B3', name: 'Parcela Agrícola B3', area: 4500, location: 'Mé-Zóchi', status: 'available' }
+                  ].map((plot) => (
+                    <div 
+                      key={plot.id}
+                      onClick={() => {
+                        showToastMsg(`Lote ${plot.id} selecionado para este processo.`, 'success');
+                        
+                        // Divide square real dimensions by pixel ratio (0.62) to get exact target area back
+                        const pixelSide = Math.sqrt(plot.area) / 0.62;
+                        
+                        const fakeVerts = [
+                          { id: 'V1', x: 0, y: 0 },
+                          { id: 'V2', x: pixelSide, y: 0 },
+                          { id: 'V3', x: pixelSide, y: pixelSide },
+                          { id: 'V4', x: 0, y: pixelSide }
+                        ];
+                        setVertices(fakeVerts);
+                      }}
+                      className={cn(
+                        "p-5 rounded-2xl border-2 transition-all cursor-pointer shadow-sm group",
+                        vertices.length > 0 && Math.round(geomResults.area) === plot.area
+                          ? "border-emerald-500 bg-emerald-50/50 dark:bg-emerald-500/10" 
+                          : "border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-950/30 hover:border-emerald-500/30"
+                      )}
+                    >
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex items-center gap-2">
+                           <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                             <MapPin className="w-4 h-4" />
+                           </div>
+                           <div>
+                             <h4 className="font-bold text-slate-800 dark:text-slate-100">{plot.name}</h4>
+                             <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">{plot.id}</p>
+                           </div>
+                        </div>
+                        {vertices.length > 0 && Math.round(geomResults.area) === plot.area && (
+                          <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                         )}
-
-                        {/* Outer Glow for Vertices */}
-                        <circle 
-                          cx={v.x} 
-                          cy={v.y} 
-                          r="18" 
-                          fill="transparent" 
-                          className="cursor-pointer hover:fill-emerald-500/10 transition-colors"
-                          onMouseDown={(e) => handleVertexMouseDown(v.id, e)}
-                        />
-
-                        {/* Vertex Point Circle marker */}
-                        <circle 
-                          cx={v.x} 
-                          cy={v.y} 
-                          r="8" 
-                          fill="#ffffff" 
-                          stroke="#10b981" 
-                          strokeWidth="3"
-                          className="cursor-grab active:cursor-grabbing hover:scale-125 transition-transform"
-                          onMouseDown={(e) => handleVertexMouseDown(v.id, e)}
-                        />
-
-                        {/* Vertex Text Identifier Label banner */}
-                        <g transform={`translate(${v.x}, ${v.y - 18})`}>
-                          <rect x="-14" y="-8" width="28" height="14" rx="3" fill="#1e293b" stroke="#10b981" strokeWidth="0.5" />
-                          <text fill="#10b981" fontSize="9" fontWeight="bold" textAnchor="middle" y="2">{v.id}</text>
-                        </g>
-                      </g>
-                    );
-                  })}
-                </svg>
-
-                {/* 3. TOOLBOX FLOATING SHELF */}
-                <div className="absolute top-6 left-6 space-y-2">
-                  <div className="bg-slate-900/90 backdrop-blur-md flex flex-col p-2 space-y-1.5 rounded-2xl border border-slate-800 shadow-2xl">
-                    <button 
-                      onClick={() => { setActiveTool('pointer'); setRulerPoints([]); }}
-                      title="Navegar & Mover Vértices"
-                      className={cn(
-                        "p-3.5 rounded-xl transition-all",
-                        activeTool === 'pointer' ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/25" : "text-slate-400 hover:text-white"
-                      )}
-                    >
-                      <MousePointer2 className="w-5 h-5" />
-                    </button>
-                    <button 
-                      onClick={() => { setActiveTool('draw'); setRulerPoints([]); }}
-                      title="Desenhar / Adicionar Vértices"
-                      className={cn(
-                        "p-3.5 rounded-xl transition-all",
-                        activeTool === 'draw' ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/25" : "text-slate-400 hover:text-white"
-                      )}
-                    >
-                      <Plus className="w-4 h-4 ml-0.5" />
-                    </button>
-                    <button 
-                      onClick={() => setActiveTool('ruler')}
-                      title="Régua de Medição"
-                      className={cn(
-                        "p-3.5 rounded-xl transition-all",
-                        activeTool === 'ruler' ? "bg-blue-500 text-white shadow-lg shadow-blue-500/25" : "text-slate-400 hover:text-white"
-                      )}
-                    >
-                      <Ruler className="w-5 h-5" />
-                    </button>
-                    <div className="h-[1px] bg-slate-800 mx-1.5" />
-                    <button 
-                      onClick={() => setScaleZoom(z => Math.min(2.5, z + 0.1))} 
-                      title="Zoom In"
-                      className="p-3.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-                    >
-                      <ZoomIn className="w-5 h-5" />
-                    </button>
-                    <button 
-                      onClick={() => setScaleZoom(z => Math.max(0.6, z - 0.1))} 
-                      title="Zoom Out"
-                      className="p-3.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-                    >
-                      <ZoomOut className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* 4. BASE LAYER PICKER SWIPER */}
-                <div className="absolute top-6 right-6">
-                  <div className="bg-slate-900/90 backdrop-blur-md flex items-center p-1.5 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden">
-                    {[
-                      { id: 'satellite', label: 'Satélite', icon: ImageIcon },
-                      { id: 'terrain', label: 'Relevo', icon: Navigation },
-                      { id: 'cad', label: 'Vetor CAD', icon: Layers }
-                    ].map(lay => (
-                      <button
-                        key={lay.id}
-                        onClick={() => setMapLayer(lay.id as any)}
-                        className={cn(
-                          "px-4 py-2 rounded-xl flex items-center gap-2 text-xs font-black uppercase tracking-widest transition-all",
-                          mapLayer === lay.id 
-                            ? "bg-emerald-500 text-white font-extrabold shadow-md"
-                            : "text-slate-400 hover:text-white"
-                        )}
-                      >
-                        <lay.icon className="w-3.5 h-3.5" />
-                        {lay.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 5. FLOATING HUD STATS AND METADATA BAR */}
-                <div className="absolute bottom-6 left-6 right-6 flex flex-wrap items-center justify-between gap-4">
-                  <div className="bg-slate-950/90 backdrop-blur-md px-6 py-4 rounded-2xl border border-slate-800 shadow-2xl flex items-center gap-6">
-                    <div>
-                      <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Escala Escrita</p>
-                      <p className="text-sm font-display font-black text-white leading-none">1 : 2,500</p>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs font-medium text-slate-500 dark:text-slate-400">
+                        <span>{plot.location}</span>
+                        <span>&bull;</span>
+                        <span className="font-bold text-slate-700 dark:text-slate-300">{plot.area.toLocaleString('pt-PT')} m²</span>
+                      </div>
                     </div>
-                    <div className="h-8 w-[1px] bg-slate-850" />
+                  ))}
+                </div>
+                
+                {vertices.length > 0 && (
+                  <div className="mt-8 p-6 bg-emerald-50 dark:bg-emerald-500/5 rounded-2xl border border-emerald-100 dark:border-emerald-500/10 flex items-start gap-4">
+                    <Info className="w-5 h-5 text-emerald-600 dark:text-emerald-500 shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Sistema Referência</p>
-                      <select 
-                        value={coordinateSystem} 
-                        onChange={(e) => setCoordinateSystem(e.target.value as any)}
-                        className="text-xs font-bold text-emerald-400 bg-transparent outline-none cursor-pointer focus:ring-0 select-none pb-0 mt-0"
-                      >
-                        <option value="WGS84" className="bg-slate-900 text-white">WGS 84 / UTM 32N</option>
-                        <option value="ED50" className="bg-slate-900 text-white">ED 50 / Lajes</option>
-                      </select>
-                    </div>
-                    <div className="h-8 w-[1px] bg-slate-850" />
-                    <div>
-                      <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Instruções Ativas</p>
-                      <p className="text-xs text-slate-300 font-medium">
-                        {activeTool === 'pointer' ? "Arraste os círculos brancos para calibrar vértices." : 
-                         activeTool === 'draw' ? "Clique no mapa livremente para adicionar novos vértices." :
-                         "Clique no ponto inicial e em seguida de destino para medir a distância."}
+                      <h4 className="font-bold text-emerald-800 dark:text-emerald-400 mb-1">Lote Pronta para Emissão</h4>
+                      <p className="text-sm text-emerald-700/80 dark:text-emerald-400/80 font-medium leading-relaxed">
+                        Ao prosseguir com a emissão do título, o lote selecionado ({Math.round(geomResults.area).toLocaleString('pt-PT')} m²) será definitivamente associado ao processo atual e todas as validações geométricas do Planeamento serão integradas no Certificado Topográfico.
                       </p>
                     </div>
                   </div>
-
-                  <div className="flex gap-2">
-                     <button 
-                       onClick={clearAllVertices}
-                       className="p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:bg-slate-850 text-slate-400 hover:text-red-400 transition-all shadow-xl font-bold flex items-center gap-2"
-                     >
-                       <Trash2 className="w-5 h-5" />
-                       <span className="text-xs uppercase tracking-widest font-black hidden sm:inline">Limpar Área</span>
-                     </button>
-                     <button 
-                       onClick={resetVerticesToPreset}
-                       className="p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:bg-slate-850 text-slate-300 transition-all shadow-xl font-bold flex items-center gap-2"
-                     >
-                       <RotateCcw className="w-5 h-5" />
-                       <span className="text-xs uppercase tracking-widest font-black hidden sm:inline">Restaurar Croquis</span>
-                     </button>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* GEOM RESULTS BAR */}
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                
-                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[2.5rem] flex items-center gap-5 shadow-sm">
-                  <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                    <Maximize2 className="w-7 h-7" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Área Calculada</p>
-                    <p className="text-2xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-none">
-                      {geomResults.area > 0 ? (
-                        <>
-                          {Math.round(geomResults.area).toLocaleString('pt-PT')} <span className="text-sm font-semibold">m²</span>
-                        </>
-                      ) : (
-                        <span className="text-slate-400 text-lg font-bold">Sem polígono</span>
-                      )}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[2.5rem] flex items-center gap-5 shadow-sm">
-                  <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500">
-                    <Navigation className="w-7 h-7" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Perímetro Computado</p>
-                    <p className="text-2xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-none">
-                      {geomResults.perimeter > 0 ? (
-                        <>
-                          {Math.round(geomResults.perimeter).toLocaleString('pt-PT')} <span className="text-sm font-semibold">metros</span>
-                        </>
-                      ) : (
-                        <span className="text-slate-400 text-lg font-bold">Sem polígono</span>
-                      )}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-[2.5rem] flex items-center gap-5 shadow-sm">
-                  <div className="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500">
-                    <CheckSquare className="w-7 h-7" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Total de Vértices</p>
-                    <p className="text-2xl font-display font-black tracking-tight text-slate-900 dark:text-white leading-none">
-                      {vertices.length} <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest block mt-0.5 sm:inline">Delimitados</span>
-                    </p>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* COORDINATES MANAGEMENT TABLE */}
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-10 rounded-[2.5rem] shadow-sm">
-                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                   <div>
-                     <h3 className="font-display font-black text-xl tracking-tight">Georreferenciação por Vértices (WGS 84)</h3>
-                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Vetor polígono ajustável em tempo real</p>
-                   </div>
-                   <button 
-                     onClick={() => {
-                       // Append vertex centrally
-                       const safeX = 500;
-                       const safeY = 300;
-                       const idx = vertices.length + 1;
-                       setVertices([...vertices, { id: `V${idx}`, x: safeX, y: safeY }]);
-                       showToastMsg(`Vértice V${idx} adicionado no centro!`, 'info');
-                     }}
-                     className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-[10px] uppercase tracking-widest font-black text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors flex items-center gap-2"
-                   >
-                     <Plus className="w-4 h-4" /> Adicionar Vértice Manual
-                   </button>
-                 </div>
-
-                 {vertices.length === 0 ? (
-                   <div className="p-12 text-center text-slate-400 font-medium border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl bg-slate-50/50 dark:bg-slate-950/20">
-                     <AlertCircle className="w-10 h-10 mx-auto text-slate-300 mb-3" />
-                     Selecione a ferramenta de desenho <span className="text-emerald-500 font-bold">"+"</span> no mapa e clique para estabelecer os limites da parcela.
-                   </div>
-                 ) : (
-                   <>
-                     <div className="hidden md:block overflow-x-auto">
-                       <table className="w-full text-left">
-                         <thead>
-                           <tr className="border-b border-slate-150 dark:border-slate-800/60 pb-4">
-                             <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400 pl-4">ID</th>
-                             <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Ponto X (Pixel)</th>
-                             <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Ponto Y (Pixel)</th>
-                             <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Easting (Mtrs)</th>
-                             <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400">Northing (Mtrs)</th>
-                             <th className="pb-4 font-black uppercase text-[10px] tracking-widest text-slate-400 text-right pr-4">Instruções</th>
-                           </tr>
-                         </thead>
-                         <tbody className="divide-y divide-slate-100 dark:divide-slate-850">
-                           {vertices.map((v) => {
-                             const utm = formatUTM(v.x, v.y);
-                             return (
-                               <tr key={v.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-955/20 transition-colors">
-                                 <td className="py-4 pl-4">
-                                   <span className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-black flex items-center justify-center border border-emerald-500/20">{v.id}</span>
-                                 </td>
-                                 <td className="py-4">
-                                   <input 
-                                     type="number" 
-                                     value={v.x}
-                                     onChange={(e) => updateVertexCoord(v.id, 'x', parseInt(e.target.value) || 0)}
-                                     className="w-24 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                                   />
-                                 </td>
-                                 <td className="py-4">
-                                   <input 
-                                     type="number" 
-                                     value={v.y}
-                                     onChange={(e) => updateVertexCoord(v.id, 'y', parseInt(e.target.value) || 0)}
-                                     className="w-24 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                                   />
-                                 </td>
-                                 <td className="py-4 text-xs font-mono font-bold text-slate-600 dark:text-slate-350">{utm.east}</td>
-                                 <td className="py-4 text-xs font-mono font-bold text-slate-600 dark:text-slate-350">{utm.north}</td>
-                                 <td className="py-4 text-right pr-4">
-                                   <button 
-                                     onClick={() => removeVertex(v.id)}
-                                     className="p-2 hover:bg-red-500/10 rounded-lg text-slate-400 hover:text-red-500 transition-colors"
-                                     title="Excluir Vértice"
-                                   >
-                                     <Trash2 className="w-4.5 h-4.5" />
-                                   </button>
-                                 </td>
-                               </tr>
-                             );
-                           })}
-                         </tbody>
-                       </table>
-                     </div>
-
-                     <div className="grid grid-cols-1 gap-4 md:hidden">
-                       {vertices.map((v) => {
-                         const utm = formatUTM(v.x, v.y);
-                         return (
-                           <div key={v.id} className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/30 p-4">
-                             <div className="flex items-center justify-between gap-3">
-                               <span className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-black flex items-center justify-center border border-emerald-500/20">
-                                 {v.id}
-                               </span>
-                               <button
-                                 onClick={() => removeVertex(v.id)}
-                                 className="p-2 hover:bg-red-500/10 rounded-lg text-slate-400 hover:text-red-500 transition-colors"
-                                 title="Excluir Vértice"
-                               >
-                                 <Trash2 className="w-4.5 h-4.5" />
-                               </button>
-                             </div>
-
-                             <div className="mt-4 grid grid-cols-1 gap-3">
-                               <div>
-                                 <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Ponto X</label>
-                                 <input
-                                   type="number"
-                                   value={v.x}
-                                   onChange={(e) => updateVertexCoord(v.id, 'x', parseInt(e.target.value) || 0)}
-                                   className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                                 />
-                               </div>
-                               <div>
-                                 <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Ponto Y</label>
-                                 <input
-                                   type="number"
-                                   value={v.y}
-                                   onChange={(e) => updateVertexCoord(v.id, 'y', parseInt(e.target.value) || 0)}
-                                   className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                                 />
-                               </div>
-                               <div className="flex items-center justify-between gap-3">
-                                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Easting</span>
-                                 <span className="text-xs font-mono font-bold text-slate-600 dark:text-slate-350">{utm.east}</span>
-                               </div>
-                               <div className="flex items-center justify-between gap-3">
-                                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Northing</span>
-                                 <span className="text-xs font-mono font-bold text-slate-600 dark:text-slate-350">{utm.north}</span>
-                               </div>
-                             </div>
-                           </div>
-                         );
-                       })}
-                     </div>
-                   </>
-                 )}
+                )}
               </div>
 
             </div>
